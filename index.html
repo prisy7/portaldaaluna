@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal da Aluna - Prof. Pri</title>
     <!-- Tailwind CSS para Estilização -->
-    <script src="https://cdn.tailwindcss.com/"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- React e Babel para rodar JSX no navegador -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Lucide (Base JS) -->
+    <!-- Lucide (Base JS para Ícones) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
@@ -44,8 +44,7 @@
         const { useState, useEffect, useRef } = React;
 
         /**
-         * Componente de Ícone Robusto
-         * Injeta o SVG via dangerouslySetInnerHTML para evitar conflitos com React no GAS
+         * Componente de Ícone Robusto para React + Lucide
          */
         const Icon = ({ name, className }) => {
             const containerRef = useRef(null);
@@ -53,7 +52,6 @@
             useEffect(() => {
                 const renderIcon = () => {
                     if (window.lucide && containerRef.current) {
-                        // Limpa e recria o elemento i que o Lucide transforma
                         containerRef.current.innerHTML = `<i data-lucide="${name}" class="${className || ''}" style="width: 100%; height: 100%;"></i>`;
                         window.lucide.createIcons();
                     }
@@ -104,7 +102,7 @@
                     data: '27/11/2025',
                     status: 'Concluída',
                     descricao: 'Entendendo gerações de processadores, tipos de memória RAM (DDR3/DDR4) e armazenamento (SATA/NVMe).',
-                    dica: 'O importante é entender o funcionamento de cada peça fazendo analogias. Não se preocupe com las siglas das especificações, isso vai pegando com a prática.',
+                    dica: 'O importante é entender o funcionamento de cada peça fazendo analogias. Não se preocupe com as siglas das especificações, isso vai pegando com a prática.',
                     materiais: [
                         { nome: 'Gravação da Aula', link: 'https://drive.google.com/file/d/1hbBAcsHvj_fwb6-Bq5Ba5_a8lqg_pTT4/view', icon: 'video' },
                         { nome: 'Transcrição da Aula', link: 'https://docs.google.com/document/d/1ysFw3k1GCvGxbib8r7A46rW7dhBPAwEknOM8bRpQ3vc/edit?tab=t.i70vh4ueyvsp', icon: 'file-text' },
@@ -180,7 +178,8 @@
             };
 
             return (
-                <div className="flex h-screen bg-slate-50 overflow-hidden relative">
+                <div className="flex h-screen bg-slate-50 overflow-hidden relative text-slate-900">
+                    {/* Overlay Mobile */}
                     {sidebarOpen && (
                         <div 
                             className="fixed inset-0 z-40 md:hidden sidebar-overlay"
@@ -188,26 +187,27 @@
                         ></div>
                     )}
 
+                    {/* Barra Lateral */}
                     <aside className={`fixed md:relative inset-y-0 left-0 bg-slate-900 text-white transition-all duration-300 flex flex-col z-50 ${sidebarOpen ? 'w-72 translate-x-0' : 'w-0 -translate-x-full md:translate-x-0 md:w-20'} overflow-hidden border-r border-slate-800 shadow-2xl`}>
                         <div className="p-6 flex items-center gap-4 bg-slate-900/50 border-b border-slate-800 min-w-[280px]">
-                            <div className="bg-blue-600 p-2 rounded-xl shrink-0">
+                            <div className="bg-blue-600 p-2 rounded-xl shrink-0 shadow-lg shadow-blue-900/40">
                                 <Icon name="cpu" className="w-6 h-6 text-white" />
                             </div>
                             <div className="overflow-hidden">
                                 <h1 className="text-lg font-black tracking-tight whitespace-nowrap uppercase">Portal da Aluna</h1>
-                                <p className="text-blue-400 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">Prof. Pri & SYSTA</p>
+                                <p className="text-blue-400 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap opacity-80">Prof. Pri & SYSTA</p>
                             </div>
                         </div>
 
                         <nav className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-2 min-w-[280px]">
-                            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-4 px-2 tracking-tighter">Cronograma do Curso</p>
+                            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-4 px-2 opacity-50">Cronograma do Curso</p>
                             {[...aulas].reverse().map((aula) => (
                                 <button
                                     key={aula.id}
                                     onClick={() => handleSelectAula(aula.id)}
-                                    className={`w-full flex items-center gap-4 p-4 md:p-3 rounded-2xl transition-all group ${selectedAulaId === aula.id && activeTab === 'aulas' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
+                                    className={`w-full flex items-center gap-4 p-4 md:p-3 rounded-2xl transition-all group ${selectedAulaId === aula.id && activeTab === 'aulas' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
                                 >
-                                    <div className={`shrink-0 flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-lg ${selectedAulaId === aula.id && activeTab === 'aulas' ? 'bg-white/20' : 'bg-slate-800 group-hover:bg-slate-700'}`}>
+                                    <div className={`shrink-0 flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-lg transition-colors ${selectedAulaId === aula.id && activeTab === 'aulas' ? 'bg-white/20' : 'bg-slate-800 group-hover:bg-slate-700'}`}>
                                         <Icon 
                                             name={aula.status === 'Concluída' ? 'check-circle' : 'clock'} 
                                             className={`w-5 h-5 md:w-4 md:h-4 ${selectedAulaId === aula.id && activeTab === 'aulas' ? 'text-white' : (aula.status === 'Concluída' ? 'text-green-500' : 'text-amber-500')}`} 
@@ -223,12 +223,13 @@
 
                         <div className="p-6 border-t border-slate-800 bg-slate-900/50 min-w-[280px]">
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white uppercase shadow-sm">SY</div>
+                                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white uppercase">SY</div>
                                 <p className="text-xs font-bold text-slate-300">Curadoria SYSTA</p>
                             </div>
                         </div>
                     </aside>
 
+                    {/* Conteúdo Central */}
                     <main className="flex-1 flex flex-col overflow-hidden relative w-full">
                         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shrink-0 shadow-sm z-30">
                             <div className="flex items-center gap-2 md:gap-4">
@@ -258,7 +259,7 @@
                                     <div className="fade-in-up" key={currentAula.id}>
                                         <div className="mb-10 md:mb-12">
                                             <div className="flex flex-wrap items-center gap-3 mb-4">
-                                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm ${currentAula.status === 'Concluída' ? 'bg-green-100 text-green-700' : (currentAula.status === 'Não iniciada' ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-700 animate-pulse')}`}>
+                                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm ${currentAula.status === 'Concluída' ? 'bg-green-100 text-green-700' : (currentAula.status === 'Não iniciada' ? 'bg-gray-200 text-gray-600' : 'bg-amber-100 text-amber-700 animate-pulse')}`}>
                                                     {currentAula.status}
                                                 </span>
                                                 <span className="text-slate-400 text-xs font-mono font-bold tracking-widest bg-white px-3 py-1 rounded-lg border border-slate-100 shadow-sm">
@@ -268,12 +269,11 @@
                                             <h1 className="text-2xl md:text-4xl font-semibold text-slate-900 leading-tight mb-6 tracking-tight">
                                                 {currentAula.titulo}
                                             </h1>
-                                            <p className="text-sm md:text-lg text-slate-600 leading-relaxed max-w-2xl border-l-4 border-blue-500 pl-6 bg-blue-50/30 py-4 rounded-r-2xl">
+                                            <p className="text-sm md:text-lg text-slate-600 leading-relaxed max-w-2xl border-l-4 border-blue-500 pl-6 bg-blue-50/30 py-4 rounded-r-2xl shadow-sm">
                                                 {currentAula.descricao}
                                             </p>
                                         </div>
 
-                                        {/* Grid de Materiais */}
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                                             {currentAula.materiais.length > 0 ? (
                                                 currentAula.materiais.map((mat, idx) => (
@@ -303,21 +303,20 @@
                                                     <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                                                         <Icon name="history" className="w-8 h-8 md:w-10 md:h-10 text-slate-300" />
                                                     </div>
-                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2">Aguardando Início</h3>
-                                                    <p className="text-slate-400 text-xs md:text-sm max-w-xs leading-relaxed">Os recursos técnicos e a gravação serão liberados logo após a aula. Fique atenta!</p>
+                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2 opacity-60">Aguardando Início</h3>
+                                                    <p className="text-slate-400 text-xs md:text-sm max-w-xs leading-relaxed opacity-80">Os recursos técnicos e a gravação serão liberados logo após a aula. Fique atenta!</p>
                                                 </div>
                                             )}
                                         </div>
 
-                                        {/* Box de Dica contextual */}
                                         {currentAula.dica && (
                                             <div className="mt-12 p-6 md:p-10 bg-blue-50/50 rounded-[2.5rem] border border-blue-100 flex flex-col sm:flex-row gap-6 items-start relative overflow-hidden group shadow-sm">
-                                                <div className="p-4 bg-blue-600 rounded-2xl text-white shrink-0 shadow-lg shadow-blue-200">
+                                                <div className="p-4 bg-blue-600 rounded-2xl text-white shrink-0 shadow-lg shadow-blue-200 z-10">
                                                     <Icon name="lightbulb" className="w-6 h-6" />
                                                 </div>
                                                 <div className="relative z-10">
-                                                    <h4 className="font-black text-blue-900 uppercase tracking-widest text-[10px] mb-2">Dica Técnica SYSTA</h4>
-                                                    <p className="text-blue-800 text-xs md:text-sm leading-relaxed italic">
+                                                    <h4 className="font-black text-blue-900 uppercase tracking-widest text-[10px] mb-2 opacity-70">Dica Técnica SYSTA</h4>
+                                                    <p className="text-blue-800 text-xs md:text-sm leading-relaxed italic font-medium">
                                                         "{currentAula.dica}"
                                                     </p>
                                                 </div>
@@ -326,23 +325,24 @@
                                     </div>
                                 ) : (
                                     <div className="fade-in-up max-w-2xl mx-auto py-4 text-center sm:text-left">
-                                        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 rounded-[3rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-white/5">
-                                            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                                        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 rounded-[3rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-white/5 text-slate-900">
+                                            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none text-white">
                                                 <Icon name="brain-circuit" className="w-80 h-80" />
                                             </div>
                                             <div className="relative z-10">
-                                                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 border border-white/10">
+                                                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 border border-white/10 text-white">
                                                     <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
                                                     IA & Tecnologia
                                                 </div>
                                                 
-                                                <div className="p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 text-left">
-                                                    <div className="flex items-center gap-4 mb-6">
+                                                <div className="p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 text-left shadow-2xl">
+                                                    <div className="flex items-center gap-4 mb-6 text-white">
                                                         <Icon name="wrench" className="w-10 h-10 text-purple-400" />
                                                         <h3 className="font-black text-2xl uppercase tracking-tighter">Notebook LM</h3>
                                                     </div>
 
                                                     <div className="space-y-6">
+                                                        {/* Atividade 01 */}
                                                         <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
                                                             <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs opacity-60">Atividade 01</h4>
                                                             <div className="flex flex-col gap-3">
@@ -365,6 +365,7 @@
                                                             </div>
                                                         </div>
 
+                                                        {/* Atividade 02 */}
                                                         <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
                                                             <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs opacity-60">Atividade 02</h4>
                                                             <div className="flex flex-col gap-3">
@@ -399,12 +400,12 @@
                         </div>
 
                         <footer className="h-14 bg-white border-t border-slate-200 flex items-center justify-between px-6 md:px-8 shrink-0">
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest opacity-60">
                                 © 2026 Prof. Pri | Tecnologia Curatorial SYSTA
                             </p>
                             <div className="flex gap-4">
-                                <Icon name="shield-check" className="w-3 h-3 text-slate-300" />
-                                <Icon name="lock" className="w-3 h-3 text-slate-300" />
+                                <Icon name="shield-check" className="w-3 h-3 text-slate-300 hover:text-blue-500 transition-colors" />
+                                <Icon name="lock" className="w-3 h-3 text-slate-300 hover:text-blue-500 transition-colors" />
                             </div>
                         </footer>
                     </main>
