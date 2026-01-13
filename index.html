@@ -53,6 +53,7 @@
             useEffect(() => {
                 const renderIcon = () => {
                     if (window.lucide && containerRef.current) {
+                        // Limpa e recria o elemento i que o Lucide transforma
                         containerRef.current.innerHTML = `<i data-lucide="${name}" class="${className || ''}" style="width: 100%; height: 100%;"></i>`;
                         window.lucide.createIcons();
                     }
@@ -73,7 +74,7 @@
         };
 
         const App = () => {
-            const [selectedAulaId, setSelectedAulaId] = useState('AULA-5');
+            const [selectedAulaId, setSelectedAulaId] = useState('AULA-6');
             const [sidebarOpen, setSidebarOpen] = useState(false);
             const [activeTab, setActiveTab] = useState('aulas');
 
@@ -146,12 +147,23 @@
                     data: '07/01/2026',
                     status: 'Concluída',
                     descricao: 'Revisão, compra de peças e atividade IA',
-                    dica: '',
+                    dica: 'Na dúvida sobre compatibilidade, consulte sempre o manual da placa-mãe ou o site do fabricante do notebook. O suporte de nível 2 exige precisão técnica!',
                     materiais: [
                         { nome: 'Gravação da aula', link: 'https://drive.google.com/file/d/1-B-vUTj7TlKskJtdEqA2P_L1oZve2eOQ/view?usp=sharing', icon: 'video' },
                         { nome: 'Transcrição da aula', link: 'https://docs.google.com/document/d/1127eTxilOvY-JhhFVDjGsBLdwMggqbZPG96VGwsZ5IU/edit?usp=sharing', icon: 'file-text' },
                         { nome: 'Fotos de placas de notebook', link: 'https://drive.google.com/drive/u/0/folders/1B4JMXpx_OtfmXSTA3c_MY19Uzrc9tUVA', icon: 'image' },
                         { nome: 'Cotação de peças', link: 'https://docs.google.com/spreadsheets/d/1zF9gufjnNBwCciH-_E1uROzs7TMh-i-SlVb-cUIsj_o/edit?usp=sharing', icon: 'shopping-bag' }
+                    ]
+                },
+                {
+                    id: 'AULA-6',
+                    titulo: 'AULA 06 - ONLINE',
+                    data: '13/01/2026',
+                    status: 'Não iniciada',
+                    descricao: 'Fundamentos de Redes: Wi-Fi (2.4 e 5GHz), Rede Móvel e o caminho invisível da informação.',
+                    dica: 'O sinal de Wi-Fi é como luz: ele reflete em superfícies e é bloqueado por barreiras físicas. O posicionamento do roteador é 50% da solução de um problema de lentidão!',
+                    materiais: [
+                        { nome: 'Apresentação: Redes', link: 'https://drive.google.com/file/d/1ueEwJ2k85BJrKq3TnxGpfm4di9JTjhrB/view?usp=sharing', icon: 'globe' }
                     ]
                 }
             ];
@@ -175,6 +187,7 @@
                         ></div>
                     )}
 
+                    {/* Sidebar fixa */}
                     <aside className={`fixed md:relative inset-y-0 left-0 bg-slate-900 text-white transition-all duration-300 flex flex-col z-50 ${sidebarOpen ? 'w-72 translate-x-0' : 'w-0 -translate-x-full md:translate-x-0 md:w-20'} overflow-hidden border-r border-slate-800 shadow-2xl`}>
                         <div className="p-6 flex items-center gap-4 bg-slate-900/50 border-b border-slate-800 min-w-[280px]">
                             <div className="bg-blue-600 p-2 rounded-xl shrink-0">
@@ -245,11 +258,11 @@
                                     <div className="fade-in-up" key={currentAula.id}>
                                         <div className="mb-10 md:mb-12">
                                             <div className="flex flex-wrap items-center gap-3 mb-4">
-                                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm ${currentAula.status === 'Concluída' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700 animate-pulse'}`}>
+                                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm ${currentAula.status === 'Concluída' ? 'bg-green-100 text-green-700' : (currentAula.status === 'Não iniciada' ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-700 animate-pulse')}`}>
                                                     {currentAula.status}
                                                 </span>
                                                 <span className="text-slate-400 text-xs font-mono font-bold tracking-widest bg-white px-3 py-1 rounded-lg border border-slate-100 shadow-sm">
-                                                    {currentAula.data}
+                                                    {currentAula.data} {currentAula.id === 'AULA-6' ? ' - 16:30h' : ''}
                                                 </span>
                                             </div>
                                             <h1 className="text-2xl md:text-4xl font-semibold text-slate-900 leading-tight mb-6 tracking-tight">
@@ -260,6 +273,7 @@
                                             </p>
                                         </div>
 
+                                        {/* Grid de Materiais */}
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                                             {currentAula.materiais.length > 0 ? (
                                                 currentAula.materiais.map((mat, idx) => (
@@ -289,12 +303,13 @@
                                                     <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                                                         <Icon name="history" className="w-8 h-8 md:w-10 md:h-10 text-slate-300" />
                                                     </div>
-                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2">Aguardando Materiais</h3>
-                                                    <p className="text-slate-400 text-xs md:text-sm max-w-xs leading-relaxed">Os recursos técnicos estão sendo processados pela Prof. Pri. Fique atenta!</p>
+                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2">Aguardando Início</h3>
+                                                    <p className="text-slate-400 text-xs md:text-sm max-w-xs leading-relaxed">Os recursos técnicos e a gravação serão liberados logo após a aula. Fique atenta!</p>
                                                 </div>
                                             )}
                                         </div>
 
+                                        {/* Box de Dica contextual */}
                                         {currentAula.dica && (
                                             <div className="mt-12 p-6 md:p-10 bg-blue-50/50 rounded-[2.5rem] border border-blue-100 flex flex-col sm:flex-row gap-6 items-start relative overflow-hidden group shadow-sm">
                                                 <div className="p-4 bg-blue-600 rounded-2xl text-white shrink-0 shadow-lg shadow-blue-200">
@@ -321,51 +336,49 @@
                                                     IA & Tecnologia
                                                 </div>
                                                 
-                                                {/* Header do Módulo */}
-                                                <div className="flex items-center gap-4 mb-10">
-                                                    <Icon name="wrench" className="w-12 h-12 text-purple-400" />
-                                                    <h3 className="font-black text-3xl uppercase tracking-tighter">Notebook LM</h3>
-                                                </div>
-
-                                                <div className="space-y-6">
-                                                    {/* Card Atividade 1 */}
-                                                    <div className="p-6 md:p-8 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 text-left">
-                                                        <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs opacity-60">Atividade 01</h4>
-                                                        <div className="flex flex-col gap-3">
-                                                            <a 
-                                                                href="https://docs.google.com/document/d/12aYuEQsgK-bp7pkLBDUCKbfq7jFxIb197LCC8i9kMNk/edit?tab=t.0" 
-                                                                target="_blank" 
-                                                                className="w-full inline-flex items-center justify-between bg-white text-slate-900 px-6 py-4 rounded-xl text-sm font-bold hover:bg-indigo-50 transition-all shadow-xl active:scale-95 group"
-                                                            >
-                                                                <span className="uppercase tracking-widest">Instruções Atividade 1</span>
-                                                                <Icon name="external-link" className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
-                                                            </a>
-                                                            <a 
-                                                                href="https://drive.google.com/file/d/1Sr94GWEchkwC0GDhkW5tpRPl1r7TK_Z6/view?usp=sharing" 
-                                                                target="_blank" 
-                                                                className="w-full inline-flex items-center justify-between bg-indigo-600 text-white px-6 py-4 rounded-xl text-sm font-bold hover:bg-indigo-500 transition-all shadow-xl active:scale-95 group"
-                                                            >
-                                                                <span className="uppercase tracking-widest italic">Entrega da atividade 1</span>
-                                                                <Icon name="external-link" className="w-4 h-4 text-indigo-200 group-hover:text-white" />
-                                                            </a>
-                                                        </div>
+                                                <div className="p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 text-left">
+                                                    <div className="flex items-center gap-4 mb-6">
+                                                        <Icon name="wrench" className="w-10 h-10 text-purple-400" />
+                                                        <h3 className="font-black text-2xl uppercase tracking-tighter">Notebook LM</h3>
                                                     </div>
 
-                                                    {/* Card Atividade 2 */}
-                                                    <div className="p-6 md:p-8 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 text-left">
-                                                        <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs opacity-60">Atividade 02</h4>
-                                                        <div className="flex flex-col gap-3">
-                                                            <a 
-                                                                href="https://docs.google.com/document/d/1xdfxBufRH8qapBytR3Cp3lmHSfFLv4z8Y0Nj-HCc1Vc/edit?usp=sharing" 
-                                                                target="_blank" 
-                                                                className="w-full inline-flex items-center justify-between bg-white text-slate-900 px-6 py-4 rounded-xl text-sm font-bold hover:bg-indigo-50 transition-all shadow-xl active:scale-95 group"
-                                                            >
-                                                                <span className="uppercase tracking-widest">Instruções Atividade 2</span>
-                                                                <Icon name="external-link" className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
-                                                            </a>
-                                                            {/* Placeholder para entrega da atividade 2 no futuro */}
-                                                            <div className="w-full border border-white/5 bg-white/5 px-6 py-4 rounded-xl text-xs font-medium text-white/30 uppercase tracking-widest text-center">
-                                                                Entrega será liberada em breve
+                                                    <div className="space-y-6">
+                                                        <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                                                            <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs opacity-60">Atividade 01</h4>
+                                                            <div className="flex flex-col gap-3">
+                                                                <a 
+                                                                    href="https://docs.google.com/document/d/12aYuEQsgK-bp7pkLBDUCKbfq7jFxIb197LCC8i9kMNk/edit?tab=t.0" 
+                                                                    target="_blank" 
+                                                                    className="w-full inline-flex items-center justify-between bg-white text-slate-900 px-6 py-4 rounded-xl text-sm font-bold hover:bg-indigo-50 transition-all shadow-xl group"
+                                                                >
+                                                                    <span className="uppercase tracking-widest">Instruções Atividade 1</span>
+                                                                    <Icon name="external-link" className="w-4 h-4 text-slate-400" />
+                                                                </a>
+                                                                <a 
+                                                                    href="https://drive.google.com/file/d/1Sr94GWEchkwC0GDhkW5tpRPl1r7TK_Z6/view?usp=sharing" 
+                                                                    target="_blank" 
+                                                                    className="w-full inline-flex items-center justify-between bg-indigo-600 text-white px-6 py-4 rounded-xl text-sm font-bold hover:bg-indigo-500 transition-all shadow-xl group"
+                                                                >
+                                                                    <span className="uppercase tracking-widest italic font-medium">Entrega da atividade 1</span>
+                                                                    <Icon name="external-link" className="w-4 h-4 text-indigo-200" />
+                                                                </a>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                                                            <h4 className="text-white font-bold mb-4 uppercase tracking-widest text-xs opacity-60">Atividade 02</h4>
+                                                            <div className="flex flex-col gap-3">
+                                                                <a 
+                                                                    href="https://docs.google.com/document/d/1xdfxBufRH8qapBytR3Cp3lmHSfFLv4z8Y0Nj-HCc1Vc/edit?usp=sharing" 
+                                                                    target="_blank" 
+                                                                    className="w-full inline-flex items-center justify-between bg-white text-slate-900 px-6 py-4 rounded-xl text-sm font-bold hover:bg-indigo-50 transition-all shadow-xl group"
+                                                                >
+                                                                    <span className="uppercase tracking-widest">Instruções Atividade 2</span>
+                                                                    <Icon name="external-link" className="w-4 h-4 text-slate-400" />
+                                                                </a>
+                                                                <div className="w-full border border-white/5 bg-white/5 px-6 py-4 rounded-xl text-xs font-medium text-white/30 uppercase tracking-widest text-center italic">
+                                                                    Entrega será liberada em breve
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
