@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal da Aluna - Prof. Pri</title>
     <!-- Tailwind CSS para Estilização -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/"></script>
     <!-- React e Babel para rodar JSX no navegador -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -104,7 +104,7 @@
                     data: '27/11/2025',
                     status: 'Concluída',
                     descricao: 'Entendendo gerações de processadores, tipos de memória RAM (DDR3/DDR4) e armazenamento (SATA/NVMe).',
-                    dica: 'O importante é entender o funcionamento de cada peça fazendo analogias. Não se preocupe com as siglas das especificações, isso vai pegando com a prática.',
+                    dica: 'O importante é entender o funcionamento de cada peça fazendo analogias. Não se preocupe com las siglas das especificações, isso vai pegando com a prática.',
                     materiais: [
                         { nome: 'Gravação da Aula', link: 'https://drive.google.com/file/d/1hbBAcsHvj_fwb6-Bq5Ba5_a8lqg_pTT4/view', icon: 'video' },
                         { nome: 'Transcrição da Aula', link: 'https://docs.google.com/document/d/1ysFw3k1GCvGxbib8r7A46rW7dhBPAwEknOM8bRpQ3vc/edit?tab=t.i70vh4ueyvsp', icon: 'file-text' },
@@ -160,9 +160,10 @@
                     titulo: 'AULA 06 - ONLINE',
                     data: '13/01/2026',
                     status: 'Não iniciada',
-                    descricao: 'Fundamentos de Redes: Wi-Fi (2.4 e 5GHz), Rede Móvel e o caminho invisível da informação.',
-                    dica: 'O sinal de Wi-Fi é como luz: ele reflete em superfícies e é bloqueado por barreiras físicas. O posicionamento do roteador é 50% da solução de um problema de lentidão!',
+                    descricao: 'Orçamento modelo e Redes (Cabeada, Wi-Fi e Dados móveis).',
+                    dica: 'A transparência no orçamento é o que fideliza o cliente. Ao explicar por que uma peça ou configuração de rede foi escolhida, você demonstra autoridade técnica.',
                     materiais: [
+                        { nome: 'Orçamento Modelo', link: 'https://docs.google.com/document/d/1IsqkWgF9kobGPzdj9wfGpMVPl59VccootqlvQL5LEbM/edit?tab=t.0', icon: 'file-text' },
                         { nome: 'Apresentação: Redes', link: 'https://drive.google.com/file/d/1ueEwJ2k85BJrKq3TnxGpfm4di9JTjhrB/view?usp=sharing', icon: 'globe' }
                     ]
                 }
@@ -187,7 +188,6 @@
                         ></div>
                     )}
 
-                    {/* Sidebar fixa */}
                     <aside className={`fixed md:relative inset-y-0 left-0 bg-slate-900 text-white transition-all duration-300 flex flex-col z-50 ${sidebarOpen ? 'w-72 translate-x-0' : 'w-0 -translate-x-full md:translate-x-0 md:w-20'} overflow-hidden border-r border-slate-800 shadow-2xl`}>
                         <div className="p-6 flex items-center gap-4 bg-slate-900/50 border-b border-slate-800 min-w-[280px]">
                             <div className="bg-blue-600 p-2 rounded-xl shrink-0">
@@ -398,10 +398,9 @@
                             </div>
                         </div>
 
-                        {/* Rodapé do Portal */}
                         <footer className="h-14 bg-white border-t border-slate-200 flex items-center justify-between px-6 md:px-8 shrink-0">
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                                © 2026 Prof. Pri | Tecnologia Aplicada SYSTA
+                                © 2026 Prof. Pri | Tecnologia Curatorial SYSTA
                             </p>
                             <div className="flex gap-4">
                                 <Icon name="shield-check" className="w-3 h-3 text-slate-300" />
