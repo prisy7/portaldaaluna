@@ -45,7 +45,6 @@
 
         /**
          * Componente de Ícone Robusto para React + Lucide
-         * Resolve erros de referência global e problemas de renderização
          */
         const Icon = ({ name, className }) => {
             const containerRef = useRef(null);
@@ -107,7 +106,7 @@
                     materiais: [
                         { nome: 'Gravação da Aula', link: 'https://drive.google.com/file/d/1hbBAcsHvj_fwb6-Bq5Ba5_a8lqg_pTT4/view', icon: 'video' },
                         { nome: 'Transcrição da Aula', link: 'https://docs.google.com/document/d/1ysFw3k1GCvGxbib8r7A46rW7dhBPAwEknOM8bRpQ3vc/edit?tab=t.i70vh4ueyvsp', icon: 'file-text' },
-                        { nome: 'Apresentação: Especificações', link: 'https://portalbck.netlify.app/aula2.html', icon: 'monitor' },
+                        { nome: 'Apresentação: Especificações', link: 'aula2.html', icon: 'monitor' },
                         { nome: 'Relatório Notebook NAT', link: 'https://portalbck.netlify.app/relatorio%20note%20natasha.htm', icon: 'monitor' },
                         { nome: 'Análise Complementar', link: 'https://drive.google.com/file/d/1LV318-Fck1yfbLtBF51Izbqh5ZP-68k5/view?usp=sharing', icon: 'video' }
                     ]
@@ -158,12 +157,15 @@
                     id: 'AULA-6',
                     titulo: 'AULA 06 - ONLINE',
                     data: '13/01/2026',
-                    status: 'Não iniciada',
+                    status: 'Concluída',
                     descricao: 'Orçamento modelo e Redes (Cabeada, Wi-Fi e Dados móveis).',
                     dica: 'A transparência no orçamento é o que fideliza o cliente. Ao explicar por que uma peça ou configuração de rede foi escolhida, você demonstra autoridade técnica.',
                     materiais: [
+                        { nome: 'Gravação da aula', link: 'https://drive.google.com/file/d/1W5Bp3Azfg71dTkOGAjOvQfw42wBjWMRi/view?usp=sharing', icon: 'video' },
+                        { nome: 'Transcrição da aula', link: 'https://docs.google.com/document/d/1IFtnESDqVw237Uor4DxFOYgD1FjmwGzFhNYRXDBitWk/edit?usp=sharing', icon: 'file-text' },
                         { nome: 'Orçamento Modelo', link: 'https://docs.google.com/document/d/1IsqkWgF9kobGPzdj9wfGpMVPl59VccootqlvQL5LEbM/edit?tab=t.0', icon: 'file-text' },
-                        { nome: 'Apresentação: Redes', link: 'https://drive.google.com/file/d/1ueEwJ2k85BJrKq3TnxGpfm4di9JTjhrB/view?usp=sharing', icon: 'globe' }
+                        { nome: 'Apresentação: Redes', link: 'aula_redes.html', icon: 'globe' },
+                        { nome: 'Quiz: Redes', link: 'quizredes.html', icon: 'help-circle' }
                     ]
                 }
             ];
@@ -264,7 +266,7 @@
                                                     {currentAula.status}
                                                 </span>
                                                 <span className="text-slate-400 text-xs font-mono font-bold tracking-widest bg-white px-3 py-1 rounded-lg border border-slate-100 shadow-sm">
-                                                    {currentAula.data} {currentAula.id === 'AULA-6' ? ' - 16:30h' : ''}
+                                                    {currentAula.data}
                                                 </span>
                                             </div>
                                             <h1 className="text-2xl md:text-4xl font-semibold text-slate-900 leading-tight mb-6 tracking-tight">
@@ -305,7 +307,7 @@
                                                     <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
                                                         <Icon name="history" className="w-8 h-8 md:w-10 md:h-10 text-slate-300" />
                                                     </div>
-                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2 opacity-60">Aguardando Início</h3>
+                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2 opacity-60">Aguardando Materiais</h3>
                                                     <p className="text-slate-400 text-xs md:text-sm max-w-xs leading-relaxed opacity-80">Os recursos técnicos e a gravação serão liberados logo após a aula. Fique atenta!</p>
                                                 </div>
                                             )}
