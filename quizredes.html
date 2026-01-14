@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Redes - Prof. Pri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+        .correct { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important; }
+        .wrong { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <div class="bg-white shadow-sm p-4 flex justify-between items-center z-10">
+        <div class="flex items-center gap-2 text-blue-800 font-bold text-lg">
+            <i data-lucide="award" class="w-6 h-6"></i>
+            <span>Desafio de Redes</span>
+        </div>
+        <div class="text-sm font-medium bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+            Prof. Pri
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden min-h-[400px] flex flex-col relative">
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 h-2">
+                <div id="progress-bar" class="bg-blue-600 h-2 transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div id="quiz-container" class="p-6 md:p-8 flex-1 flex flex-col justify-center">
+                <!-- Conteúdo injetado via JS -->
+            </div>
+
+            <!-- Footer (Botão Próximo) -->
+            <div id="footer-container" class="bg-gray-50 p-4 border-t border-gray-100 flex justify-end hidden">
+                <button onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-colors">
+                    Próxima <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Banco de Perguntas ---
+        const questions = [
+            {
+                question: "Minha operadora cortou minha internet no celular dizendo que atingi o limite. O que acabou?",
+                options: [
+                    "A Velocidade (Mbps)",
+                    "O Volume/Franquia (GB)",
+                    "A Frequência (GHz)",
+                    "A bateria do roteador"
+                ],
+                correct: 1,
+                explanation: "Exato! Na analogia, acabou a 'água da garrafinha'. Dados móveis são medidos em GIGAS (Volume)."
+            },
+            {
+                question: "Estou no fundo do quintal, longe do roteador, e preciso apenas ler e-mails (que são leves). Qual frequência tem mais chance de funcionar lá?",
+                options: [
+                    "5 GHz (A Ferrari)",
+                    "2.4 GHz (O Trator)",
+                    "Cabo de Rede",
+                    "Bluetooth"
+                ],
+                correct: 1,
+                explanation: "Correto! O 2.4 GHz é como um trator: lento, mas forte para atravessar paredes e chegar longe."
+            },
+            {
+                question: "Vou participar de uma competição de jogos online e não posso ter travamentos de jeito nenhum. Qual a conexão mais estável?",
+                options: [
+                    "Wi-Fi 7",
+                    "Wi-Fi 5 GHz do lado do roteador",
+                    "Cabo de Rede (Ethernet)",
+                    "4G"
+                ],
+                correct: 2,
+                explanation: "Isso aí! O cabo é o 'Trem no Trilho'. É a única conexão física imune a interferências e instabilidade."
+            },
+            {
+                question: "O que o Wi-Fi 6 trouxe de melhoria principal em relação aos antigos?",
+                options: [
+                    "Aumentou o alcance para 10km",
+                    "Gerencia melhor o trânsito de VÁRIOS aparelhos ao mesmo tempo",
+                    "Eliminou a necessidade de senhas",
+                    "Usa a rede de celular"
+                ],
+                correct: 1,
+                explanation: "Perfeito! O Wi-Fi 6 é o 'Gerente de Trânsito', evitando que a rede trave quando a casa está cheia de dispositivos."
+            },
+            {
+                question: "Verdadeiro ou Falso: A rede 5G do meu celular novo é a mesma coisa que a rede Wi-Fi 5GHz do meu roteador.",
+                options: [
+                    "Verdadeiro, é tudo 5 alguma coisa.",
+                    "Falso, são tecnologias totalmente diferentes."
+                ],
+                correct: 1,
+                explanation: "Muito bem! 5G é a Quinta Geração de celular. 5GHz é a frequência do Wi-Fi. Nomes parecidos, coisas diferentes."
+            },
+            {
+                question: "Qual a grande novidade do Wi-Fi 7?",
+                options: [
+                    "Não precisa de energia elétrica",
+                    "Usa uma nova estrada exclusiva de 6 GHz",
+                    "Funciona debaixo d'água",
+                    "Substitui o 4G na rua"
+                ],
+                correct: 1,
+                explanation: "Exato! O Wi-Fi 7 (e o 6E) inaugura a frequência de 6 GHz, uma 'estrada nova' sem trânsito nenhum."
+            },
+            {
+                question: "Contratei '600 Mega' de fibra ótica. Essa medida (600) refere-se a:",
+                options: [
+                    "Velocidade (Velocímetro)",
+                    "Quantidade de dados (Tanque de Gasolina)",
+                    "Distância que o fio alcança",
+                    "Preço da conta"
+                ],
+                correct: 0,
+                explanation: "Correto! Mbps (Mega) é velocidade. É o quão rápido a informação chega até você."
+            },
+            {
+                question: "Por que o sinal de 5 GHz é chamado de 'Ferrari' na nossa aula?",
+                options: [
+                    "Porque é vermelho",
+                    "Porque é caro",
+                    "Porque é muito rápido, mas não anda bem em estrada de terra (barreiras)",
+                    "Porque consome muita gasolina"
+                ],
+                correct: 2,
+                explanation: "Boa! É super rápido, mas bateu no muro (parede), ele para. Alcance curto, velocidade alta."
+            },
+            {
+                question: "Estou viajando de carro em uma estrada. Quem está fornecendo minha internet?",
+                options: [
+                    "O roteador da minha casa",
+                    "Um satélite da NASA",
+                    "Rede Móvel (Torres de Celular)",
+                    "Cabo Submarino"
+                ],
+                correct: 2,
+                explanation: "Certo! A rede móvel (celular) é projetada para te seguir e cobrir grandes áreas abertas através das torres."
+            },
+            {
+                question: "Se eu tiver um micro-ondas antigo ligado, ele pode atrapalhar qual conexão?",
+                options: [
+                    "O cabo de rede",
+                    "O Wi-Fi 2.4 GHz",
+                    "O Wi-Fi 5 GHz",
+                    "A fibra ótica da rua"
+                ],
+                correct: 1,
+                explanation: "Isso mesmo! Micro-ondas, babás eletrônicas e telefones sem fio usam a mesma frequência (2.4 GHz) e causam interferência."
+            }
+        ];
+
+        // --- Estado da Aplicação ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // --- Funções ---
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+            const container = document.getElementById('quiz-container');
+            const footer = document.getElementById('footer-container');
+            
+            // Atualizar barra de progresso
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            footer.classList.add('hidden'); // Esconder botão próxima
+
+            let optionsHtml = '';
+            q.options.forEach((opt, index) => {
+                // Modificado: Envolvemos o ícone em um <span class="icon-wrapper">
+                optionsHtml += `
+                    <button onclick="checkAnswer(${index}, this)" 
+                        class="w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all mb-3 text-lg font-medium group flex justify-between items-center option-btn">
+                        <span>${opt}</span>
+                        <span class="icon-wrapper">
+                            <i data-lucide="circle" class="w-5 h-5 text-gray-400 group-hover:text-blue-500"></i>
+                        </span>
+                    </button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="animate-fadeIn">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Pergunta ${currentQuestionIndex + 1} de ${questions.length}</span>
+                    <h2 class="text-2xl font-bold text-gray-800 mt-2 mb-6">${q.question}</h2>
+                    <div class="flex flex-col">
+                        ${optionsHtml}
+                    </div>
+                    <div id="feedback-area" class="mt-4 hidden p-4 rounded-lg bg-gray-50 border border-gray-200 animate-fadeIn">
+                        <p id="feedback-text" class="text-gray-700"></p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (answered) return; // Trava se já respondeu
+            answered = true;
+
+            const q = questions[currentQuestionIndex];
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackText = document.getElementById('feedback-text');
+            const footer = document.getElementById('footer-container');
+            const allBtns = document.querySelectorAll('.option-btn');
+
+            // Mostrar feedback
+            feedbackArea.classList.remove('hidden');
+            footer.classList.remove('hidden');
+
+            // Função auxiliar para mudar o ícone com segurança
+            const setIcon = (btn, iconName, colorClass) => {
+                const wrapper = btn.querySelector('.icon-wrapper');
+                if (wrapper) {
+                    wrapper.innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5 ${colorClass}"></i>`;
+                }
+            };
+
+            if (selectedIndex === q.correct) {
+                // Acertou
+                score++;
+                btnElement.classList.add('correct');
+                setIcon(btnElement, 'check-circle', 'text-green-700');
+                
+                feedbackArea.classList.add('bg-green-50', 'border-green-200');
+                feedbackText.innerHTML = `<span class="font-bold text-green-700 block mb-1">Correto! 🎉</span> ${q.explanation}`;
+            } else {
+                // Errou
+                btnElement.classList.add('wrong');
+                setIcon(btnElement, 'x-circle', 'text-red-700');
+                
+                // Mostrar a correta
+                const correctBtn = allBtns[q.correct];
+                correctBtn.classList.add('correct');
+                setIcon(correctBtn, 'check-circle', 'text-green-700');
+
+                feedbackArea.classList.add('bg-red-50', 'border-red-200');
+                feedbackText.innerHTML = `<span class="font-bold text-red-700 block mb-1">Ops! A resposta certa era outra.</span> ${q.explanation}`;
+            }
+
+            // Desabilitar outros cliques
+            allBtns.forEach(btn => btn.disabled = true);
+            
+            // Recriar ícones para transformar os novos <i> em <svg>
+            lucide.createIcons();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const container = document.getElementById('quiz-container');
+            const footer = document.getElementById('footer-container');
+            document.getElementById('progress-bar').style.width = `100%`;
+            footer.classList.add('hidden');
+
+            let message = "";
+            let icon = "";
+            let color = "";
+
+            if (score === 10) {
+                message = "Perfeito! Você é uma Mestre das Redes!";
+                icon = "trophy";
+                color = "text-yellow-500";
+            } else if (score >= 7) {
+                message = "Muito bem! Você entendeu quase tudo.";
+                icon = "thumbs-up";
+                color = "text-green-600";
+            } else {
+                message = "Bom esforço! Que tal revisar o material?";
+                icon = "book-open";
+                color = "text-blue-600";
+            }
+
+            container.innerHTML = `
+                <div class="text-center animate-fadeIn py-8">
+                    <div class="inline-flex p-6 rounded-full bg-gray-100 mb-6">
+                        <i data-lucide="${icon}" class="w-16 h-16 ${color}"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Finalizado!</h2>
+                    <p class="text-xl text-gray-600 mb-8">${message}</p>
+                    
+                    <div class="text-6xl font-black ${color} mb-2">${score}/10</div>
+                    <p class="text-gray-400 uppercase text-sm font-bold tracking-widest mb-8">Sua Pontuação</p>
+
+                    <button onclick="location.reload()" class="bg-gray-800 hover:bg-black text-white font-bold py-3 px-8 rounded-full transition-transform hover:scale-105 inline-flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i> Tentar Novamente
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Iniciar
+        loadQuestion();
+
+    </script>
+</body>
+</html>
