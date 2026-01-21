@@ -36,7 +36,7 @@
                 <p class="text-xs text-slate-400 text-left">Imersão Técnica Profissional</p>
             </div>
         </div>
-        <div class="text-xs font-mono text-slate-500 hidden md:block" id="slide-counter">Slide 1 / 13</div>
+        <div class="text-xs font-mono text-slate-500 hidden md:block" id="slide-counter">Slide 1 / 14</div>
     </header>
 
     <!-- Conteúdo Principal -->
@@ -81,7 +81,7 @@
                             <span class="text-sm font-bold uppercase tracking-widest text-green-300">Android</span>
                         </div>
                     </div>
-                    <p class="mt-8 text-lg md:text-xl px-4 leading-relaxed">
+                    <p class="mt-8 text-lg md:text-xl px-4 leading-relaxed text-center">
                         <b>Diferença Crucial:</b> O Sistema é o palco. O Programa é o ator. <br>
                         <span class="text-slate-400 italic">O Android gerencia o celular; o WhatsApp é apenas um programa que roda dentro dele.</span>
                     </p>
@@ -129,9 +129,33 @@
                             </div>
                         </div>
                     </div>
-                    <p class="mt-6 text-base md:text-lg italic text-slate-300 px-4">
+                    <p class="mt-6 text-base md:text-lg italic text-slate-300 px-4 text-center">
                         A exclamação amarela <b>[!]</b> indica que o componente está "mudo": ele existe, mas o Windows não sabe como usá-lo.
                     </p>
+                `
+            },
+            {
+                title: "Principais Tipos de Drivers",
+                subtitle: "Quem é quem no sistema?",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-left">
+                        <div class="bg-slate-800/50 p-5 rounded-xl border border-blue-500/20">
+                            <h4 class="text-blue-400 font-bold text-lg mb-1">Chipset</h4>
+                            <p class="text-sm opacity-90 leading-relaxed">É o mais importante. Gerencia a comunicação entre o processador, memória e periféricos. Sem ele, o PC fica lento e instável.</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-5 rounded-xl border border-green-500/20">
+                            <h4 class="text-green-400 font-bold text-lg mb-1">Vídeo (GPU)</h4>
+                            <p class="text-sm opacity-90 leading-relaxed">Controla a imagem. Essencial para que a tela não fique "piscando" ou com resolução baixa.</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-5 rounded-xl border border-red-500/20">
+                            <h4 class="text-red-400 font-bold text-lg mb-1">RAID / SATA</h4>
+                            <p class="text-sm opacity-90 leading-relaxed">Controla como o Windows lê os discos (HD/SSD). Se você usa múltiplos discos em conjunto, este driver é vital.</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-5 rounded-xl border border-yellow-500/20">
+                            <h4 class="text-yellow-400 font-bold text-lg mb-1">Áudio / Som</h4>
+                            <p class="text-sm opacity-90 leading-relaxed">Geralmente da Realtek. Sem ele, o som pode chiar ou simplesmente não sair nas caixas e fones.</p>
+                        </div>
+                    </div>
                 `
             },
             {
@@ -141,22 +165,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                         <div class="bg-blue-800 p-5 rounded-xl border-2 border-slate-400 shadow-lg">
                             <h4 class="text-sm font-bold mb-3 uppercase text-blue-100">Legacy BIOS (Antiga)</h4>
-                            <div class="p-3 bg-blue-900 border border-blue-400 rounded font-mono text-[11px] text-blue-200">
+                            <div class="p-3 bg-blue-900 border border-blue-400 rounded font-mono text-[11px] text-blue-200 text-center">
                                 <p class="text-yellow-400 underline mb-2">OBRIGATÓRIO:</p>
                                 <p class="text-white text-lg font-bold">MBR</p>
-                                <p class="mt-1 opacity-70">(Master Boot Record)</p>
                             </div>
                         </div>
                         <div class="bg-slate-800 p-5 rounded-xl border-2 border-cyan-500 shadow-lg">
                             <h4 class="text-sm font-bold mb-3 uppercase text-cyan-400">UEFI BIOS (Moderna)</h4>
-                            <div class="p-3 bg-slate-900 border border-cyan-900 rounded font-mono text-[11px] text-cyan-200">
+                            <div class="p-3 bg-slate-900 border border-cyan-900 rounded font-mono text-[11px] text-cyan-200 text-center">
                                 <p class="text-green-400 underline mb-2">OBRIGATÓRIO:</p>
                                 <p class="text-white text-lg font-bold">GPT</p>
-                                <p class="mt-1 opacity-70">(GUID Partition Table)</p>
                             </div>
                         </div>
                     </div>
-                    <p class="mt-6 text-lg text-slate-300 font-medium">
+                    <p class="mt-6 text-lg text-slate-300 font-medium text-center">
                         <b>Casamento Técnico:</b> Se você usa UEFI (padrão atual), o seu disco <br> 
                         <span class="text-cyan-400">TEM que estar em GPT</span> para o Windows 11 funcionar.
                     </p>
@@ -174,9 +196,9 @@
                         </div>
                         <div class="text-left space-y-4 text-lg">
                             <p>🏠 <b>O Disco é a Casa:</b></p>
-                            <p>• <b>C:</b> É o cômodo principal onde você vive (seus arquivos e Windows).</p>
-                            <p>• <b>Reservado/EFI:</b> É o quadro de força. Você não entra lá, mas sem ele a casa não liga.</p>
-                            <p>• <b>Recuperação:</b> É a caixa de ferramentas/primeiros socorros. Só usamos se algo quebrar.</p>
+                            <p>• <b>C:</b> É o cômodo principal onde você vive (seus arquivos).</p>
+                            <p>• <b>Reservado/EFI:</b> É o quadro de força. A casa não liga sem ele.</p>
+                            <p>• <b>Recuperação:</b> É a caixa de ferramentas para emergências.</p>
                         </div>
                     </div>
                 `
@@ -215,8 +237,8 @@
                              <p class="text-xs font-bold uppercase tracking-widest">Versão 2.0</p>
                         </div>
                         <div class="flex-grow text-left space-y-4">
-                            <p class="text-xl"><b>BitLocker:</b> Criptografia total.</p>
-                            <p class="text-lg text-slate-400 leading-relaxed">Se alguém tirar seu HD e colocar em outro PC, não consegue ver os arquivos. O chip TPM guarda a "chave" secreta que libera o acesso.</p>
+                            <p class="text-xl font-bold">BitLocker: Criptografia total.</p>
+                            <p class="text-lg text-slate-400 leading-relaxed">Se alguém roubar seu SSD, não consegue ler os arquivos. O chip TPM guarda a "chave" secreta que libera o acesso ao ligar o PC.</p>
                         </div>
                     </div>
                 `
@@ -261,25 +283,24 @@
                         </div>
                     </div>
                     <div class="mt-6 text-left text-sm md:text-base grid grid-cols-2 gap-y-2 opacity-80 px-4">
-                        <div><b>winget search:</b> Procura o nome correto</div>
+                        <div><b>winget search:</b> Procura o nome</div>
                         <div><b>winget upgrade --all:</b> Atualiza TUDO</div>
-                        <div><b>winget list:</b> O que já está instalado</div>
+                        <div><b>winget list:</b> Lista instalados</div>
                         <div><b>winget uninstall:</b> Remove programas</div>
                     </div>
                 `
             },
             {
                 title: "Dicas da Systa",
-                subtitle: "20 anos de experiência resumidos",
+                subtitle: "Checklist Profissional",
                 content: `
                     <div class="bg-blue-900/30 p-8 rounded-3xl border border-blue-500/40 text-left space-y-6 shadow-2xl">
-                        <div class="flex gap-4">
-                            <span class="text-2xl">🚨</span>
-                            <p class="text-lg font-bold text-blue-200 underline">REGRAS DE OURO:</p>
+                        <p class="text-lg"><b>1.</b> Sempre cheque o SMART do disco antes de formatar.</p>
+                        <p class="text-lg"><b>2.</b> A BIOS é o alicerce: se ela estiver instável, o Windows também estará.</p>
+                        <p class="text-lg"><b>3.</b> Driver de Chipset é o primeiro a ser instalado após o Windows.</p>
+                        <div class="mt-4 p-4 glass rounded-xl text-blue-300 text-base italic text-center">
+                            "TI não é apertar botão, é entender o fluxo dos dados."
                         </div>
-                        <p class="text-lg"><b>1.</b> NUNCA comece a formatar sem abrir o Gerenciador de Discos e ver se a máquina é GPT ou MBR.</p>
-                        <p class="text-lg"><b>2.</b> A BIOS é o alicerce. Se ela estiver instável, o Windows também estará.</p>
-                        <p class="text-lg"><b>3.</b> Driver de Chipset é o "óleo do motor": instale-o antes de qualquer outro driver.</p>
                     </div>
                 `
             }
@@ -322,7 +343,7 @@
                     <div class="text-center slide-active p-12 glass rounded-3xl">
                         <div class="text-8xl mb-8">🛠️</div>
                         <h2 class="text-5xl font-bold mb-6 text-white">Pronta para o Suporte!</h2>
-                        <p class="text-xl text-slate-400 mb-8 max-w-md mx-auto">Você agora domina a base técnica que separa um "trocador de peças" de uma verdadeira especialista.</p>
+                        <p class="text-xl text-slate-400 mb-8 max-w-md mx-auto">Você agora domina a base técnica que separa um amador de uma verdadeira especialista.</p>
                         <button onclick="location.reload()" class="px-12 py-4 bg-blue-600 rounded-full font-bold shadow-xl shadow-blue-500/40 hover:scale-105 transition-transform">Reiniciar Treinamento</button>
                     </div>
                 `;
