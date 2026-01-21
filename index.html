@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal da Aluna - Prof. Pri</title>
-    <!-- Tailwind CSS para Estilização -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React e Babel para rodar JSX no navegador -->
+    <!-- React e Babel -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Lucide (Base JS para Ícones) -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
@@ -19,22 +19,9 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
-        
-        @media (max-width: 768px) {
-            .sidebar-overlay {
-                background-color: rgba(15, 23, 42, 0.5);
-                backdrop-filter: blur(4px);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .sidebar-overlay { background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); } }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -43,43 +30,25 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        /**
-         * Componente de Ícone Robusto para React + Lucide
-         */
+        // Componente de Ícone Robusto
         const Icon = ({ name, className }) => {
             const containerRef = useRef(null);
-
             useEffect(() => {
-                const renderIcon = () => {
-                    if (window.lucide && containerRef.current) {
-                        containerRef.current.innerHTML = `<i data-lucide="${name}" class="${className || ''}" style="width: 100%; height: 100%;"></i>`;
-                        window.lucide.createIcons();
-                    }
-                };
-                renderIcon();
-                if (!window.lucide) {
-                    const timer = setInterval(() => {
-                        if (window.lucide) {
-                            renderIcon();
-                            clearInterval(timer);
-                        }
-                    }, 100);
-                    return () => clearInterval(timer);
+                if (window.lucide && containerRef.current) {
+                    containerRef.current.innerHTML = `<i data-lucide="${name}" class="${className || ''}" style="width: 100%; height: 100%;"></i>`;
+                    window.lucide.createIcons();
                 }
             }, [name, className]);
-
             return <span ref={containerRef} className={`inline-flex items-center justify-center shrink-0 ${className}`} />;
         };
 
         const App = () => {
-            const [selectedAulaId, setSelectedAulaId] = useState('AULA-6');
+            const [selectedAulaId, setSelectedAulaId] = useState('AULA-8');
             const [sidebarOpen, setSidebarOpen] = useState(false);
             const [activeTab, setActiveTab] = useState('aulas');
 
             useEffect(() => {
-                if (window.innerWidth >= 768) {
-                    setSidebarOpen(true);
-                }
+                if (window.innerWidth >= 768) setSidebarOpen(true);
             }, []);
 
             const aulas = [
@@ -89,11 +58,9 @@
                     data: '22/11/2025',
                     status: 'Concluída',
                     descricao: 'Introdução à montagem e desmontagem. Identificação física de componentes em notebooks.',
-                    dica: 'Registre fotos antes e durante a desmontagem de notebooks. Não esqueça de organizar os parafusos por tamanho e local. Se necessário faça anotação em fita crepe e cole no equipamento.',
                     materiais: [
                         { nome: 'Guia de Montagem', link: 'https://docs.google.com/document/d/1_RLd22RJ0j92Pr0_AuSgMajF0K8fDfYJOop_SES9gpg/edit?tab=t.0', icon: 'file-text' },
-                        { nome: 'Galeria de Fotos (Trello)', link: 'https://trello.com/b/280OMwBb/manutencoes', icon: 'image' },
-                        { nome: 'Atividades: Máquina BCK', link: 'https://trello.com/c/5ZkRwKcl/15-m%C3%A1quina-bck', icon: 'wrench' }
+                        { nome: 'Galeria de Fotos (Trello)', link: 'https://trello.com/b/280OMwBb/manutencoes', icon: 'image' }
                     ]
                 },
                 {
@@ -101,14 +68,11 @@
                     titulo: 'AULA 02 - ONLINE',
                     data: '27/11/2025',
                     status: 'Concluída',
-                    descricao: 'Entendendo gerações de processadores, tipos de memória RAM (DDR3/DDR4) e armazenamento (SATA/NVMe).',
-                    dica: 'O importante é entender o funcionamento de cada peça fazendo analogias. Não se preocupe com as siglas das especificações, isso vai pegando com a prática.',
+                    descricao: 'Entendendo gerações de processadores, tipos de memória RAM e armazenamento.',
                     materiais: [
                         { nome: 'Gravação da Aula', link: 'https://drive.google.com/file/d/1hbBAcsHvj_fwb6-Bq5Ba5_a8lqg_pTT4/view', icon: 'video' },
                         { nome: 'Transcrição da Aula', link: 'https://docs.google.com/document/d/1ysFw3k1GCvGxbib8r7A46rW7dhBPAwEknOM8bRpQ3vc/edit?tab=t.i70vh4ueyvsp', icon: 'file-text' },
-                        { nome: 'Apresentação: Especificações', link: 'aula2.html', icon: 'monitor' },
-                        { nome: 'Relatório Notebook NAT', link: 'https://portalbck.netlify.app/relatorio%20note%20natasha.htm', icon: 'monitor' },
-                        { nome: 'Análise Complementar', link: 'https://drive.google.com/file/d/1LV318-Fck1yfbLtBF51Izbqh5ZP-68k5/view?usp=sharing', icon: 'video' }
+                        { nome: 'Apresentação: Especificações', link: 'aula2.html', icon: 'monitor' }
                     ]
                 },
                 {
@@ -116,13 +80,10 @@
                     titulo: 'AULA 03 - ONLINE',
                     data: '04/12/2025',
                     status: 'Concluída',
-                    descricao: 'O processo de inicialização (POST), configuração de BIOS/UEFI e diagnóstico de defeitos básicos.',
-                    dica: 'Entender o que faz ligar o notebook facilita demais para diagnosticar e solucionar problemas',
+                    descricao: 'Processo de boot (POST), BIOS/UEFI e diagnósticos.',
                     materiais: [
                         { nome: 'Gravação da Aula', link: 'https://drive.google.com/file/d/1ejQwbZF-x2nM-bEj_XuJtDQ3YNBg7sNR/view', icon: 'video' },
-                        { nome: 'Transcrição da Aula', link: 'https://docs.google.com/document/d/16lzTPQn7iGlIezS8rfOTD8W043m0DN9CCBLEswhq0vU/edit?tab=t.x94e9zs0vjr5', icon: 'file-text' },
-                        { nome: 'Simulador de Boot', link: 'https://portalbck.netlify.app/simulador_diagnostico_boot_systa', icon: 'cpu' },
-                        { nome: 'Lousa Digital', link: 'https://portalbck.netlify.app/lousa_hardware_systa', icon: 'layout' }
+                        { nome: 'Simulador de Boot', link: 'https://portalbck.netlify.app/simulador_diagnostico_boot_systa', icon: 'cpu' }
                     ]
                 },
                 {
@@ -130,13 +91,9 @@
                     titulo: 'AULA 04 - ONLINE',
                     data: '11/12/2025',
                     status: 'Concluída',
-                    descricao: 'Arquitetura da Internet, Cookies, Web, Deep Web e Dark Web.',
-                    dica: 'Lembre-se: Internet e Web não são a mesma coisa!',
+                    descricao: 'Arquitetura da Internet, Cookies, Web e Privacidade.',
                     materiais: [
-                        { nome: 'Gravação Aula 4', link: 'https://drive.google.com/file/d/1ieGdML7pYixiTUbHo89oH0QdlDvBV5YT/view?usp=sharing', icon: 'video' },
-                        { nome: 'Transcrição Aula 4', link: 'https://docs.google.com/document/d/1f8ec2MhD_vqqUgAatfBKHoUh1f0bdg5N_I1Hb8lYoSw/edit?tab=t.kg9osv62dd2b', icon: 'file-text' },
-                        { nome: 'Material: Internet e Web', link: 'https://docs.google.com/presentation/d/1Q-mnos_oNAm13QWYYxaEV21xNbA7nP7Nb0xz0vdGLkA/edit?usp=sharing', icon: 'globe' },
-                        { nome: 'Cookies e Privacidade', link: 'https://docs.google.com/presentation/d/1NieIizCgkjvXocHBbMsPWrhqZTTAu-j3hktFxVOV5LU/edit?usp=sharing', icon: 'shield-check' }
+                        { nome: 'Gravação Aula 4', link: 'https://drive.google.com/file/d/1ieGdML7pYixiTUbHo89oH0QdlDvBV5YT/view?usp=sharing', icon: 'video' }
                     ]
                 },
                 {
@@ -144,13 +101,11 @@
                     titulo: 'AULA 05 - ONLINE',
                     data: '07/01/2026',
                     status: 'Concluída',
-                    descricao: 'Revisão, compra de peças e atividade IA',
-                    dica: 'Na dúvida sobre compatibilidade, consulte sempre o manual da placa-mãe ou o site do fabricante do notebook. O suporte de nível 2 exige precisão técnica!',
+                    descricao: 'Revisão técnica, cotação de peças e introdução à IA.',
                     materiais: [
                         { nome: 'Gravação da aula', link: 'https://drive.google.com/file/d/1-B-vUTj7TlKskJtdEqA2P_L1oZve2eOQ/view?usp=sharing', icon: 'video' },
                         { nome: 'Transcrição da aula', link: 'https://docs.google.com/document/d/1127eTxilOvY-JhhFVDjGsBLdwMggqbZPG96VGwsZ5IU/edit?usp=sharing', icon: 'file-text' },
-                        { nome: 'Fotos de placas de notebook', link: 'https://drive.google.com/drive/u/0/folders/1B4JMXpx_OtfmXSTA3c_MY19Uzrc9tUVA', icon: 'image' },
-                        { nome: 'Cotação de peças', link: 'https://docs.google.com/spreadsheets/d/1zF9gufjnNBwCciH-_E1uROzs7TMh-i-SlVb-cUIsj_o/edit?usp=sharing', icon: 'shopping-bag' }
+                        { nome: 'Fotos de placas', link: 'https://drive.google.com/drive/u/0/folders/1B4JMXpx_OtfmXSTA3c_MY19Uzrc9tUVA', icon: 'image' }
                     ]
                 },
                 {
@@ -159,13 +114,34 @@
                     data: '13/01/2026',
                     status: 'Concluída',
                     descricao: 'Orçamento modelo e Redes (Cabeada, Wi-Fi e Dados móveis).',
-                    dica: 'A transparência no orçamento é o que fideliza o cliente. Ao explicar por que uma peça ou configuração de rede foi escolhida, você demonstra autoridade técnica.',
                     materiais: [
                         { nome: 'Gravação da aula', link: 'https://drive.google.com/file/d/1W5Bp3Azfg71dTkOGAjOvQfw42wBjWMRi/view?usp=sharing', icon: 'video' },
                         { nome: 'Transcrição da aula', link: 'https://docs.google.com/document/d/1IFtnESDqVw237Uor4DxFOYgD1FjmwGzFhNYRXDBitWk/edit?usp=sharing', icon: 'file-text' },
                         { nome: 'Orçamento Modelo', link: 'https://docs.google.com/document/d/1IsqkWgF9kobGPzdj9wfGpMVPl59VccootqlvQL5LEbM/edit?tab=t.0', icon: 'file-text' },
                         { nome: 'Apresentação: Redes', link: 'aula_redes.html', icon: 'globe' },
                         { nome: 'Quiz: Redes', link: 'quizredes.html', icon: 'help-circle' }
+                    ]
+                },
+                {
+                    id: 'AULA-7',
+                    titulo: 'AULA 07 - PRESENCIAL',
+                    data: '17/01/2026',
+                    status: 'Concluída',
+                    descricao: 'Formatação e instalação do Windows 11 com Bypass em Desktop antigo.',
+                    materiais: [
+                        { nome: 'Guia instalação Windows Prof.', link: 'https://docs.google.com/document/d/1qt9_TYgX-Fp4pqSAxh852HYTeN-ZnkcSFBpMup5fukM/edit?usp=sharing', icon: 'file-check' },
+                        { nome: 'Guia instalação Windows Nat', link: 'https://docs.google.com/document/d/12614HJRO18-fJrR6VrxlJrcJuNNbCgV_UAfAr9M0Opo/edit?usp=sharing', icon: 'edit-3' }
+                    ]
+                },
+                {
+                    id: 'AULA-8',
+                    titulo: 'AULA 08 - ONLINE',
+                    data: '21/01/2026',
+                    status: 'Não iniciada',
+                    descricao: 'Fundamentos de TI: Sistemas Operacionais, Licenças, UEFI, Drivers e Segurança.',
+                    dica: 'A base técnica é o que diferencia um bom profissional. Hoje estudaremos a estrutura lógica que faz o hardware ganhar vida.',
+                    materiais: [
+                        { nome: 'Material: Fundamentos de TI', link: 'fundamentosti.html', icon: 'monitor' }
                     ]
                 }
             ];
@@ -182,7 +158,6 @@
 
             return (
                 <div className="flex h-screen bg-slate-50 overflow-hidden relative text-slate-900">
-                    {/* Overlay Mobile */}
                     {sidebarOpen && (
                         <div 
                             className="fixed inset-0 z-40 md:hidden sidebar-overlay"
@@ -190,7 +165,7 @@
                         ></div>
                     )}
 
-                    {/* Barra Lateral */}
+                    {/* Barra Lateral Navegação */}
                     <aside className={`fixed md:relative inset-y-0 left-0 bg-slate-900 text-white transition-all duration-300 flex flex-col z-50 ${sidebarOpen ? 'w-72 translate-x-0' : 'w-0 -translate-x-full md:translate-x-0 md:w-20'} overflow-hidden border-r border-slate-800 shadow-2xl`}>
                         <div className="p-6 flex items-center gap-4 bg-slate-900/50 border-b border-slate-800 min-w-[280px]">
                             <div className="bg-blue-600 p-2 rounded-xl shrink-0 shadow-lg shadow-blue-900/40">
@@ -307,7 +282,7 @@
                                                     <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
                                                         <Icon name="history" className="w-8 h-8 md:w-10 md:h-10 text-slate-300" />
                                                     </div>
-                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2 opacity-60">Aguardando Materiais</h3>
+                                                    <h3 className="text-lg font-black text-slate-400 uppercase tracking-widest mb-2 opacity-60">Aguardando Início</h3>
                                                     <p className="text-slate-400 text-xs md:text-sm max-w-xs leading-relaxed opacity-80">Os recursos técnicos e a gravação serão liberados logo após a aula. Fique atenta!</p>
                                                 </div>
                                             )}
@@ -331,17 +306,17 @@
                                 ) : (
                                     <div className="fade-in-up max-w-2xl mx-auto py-4 text-center sm:text-left text-white">
                                         <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 rounded-[3rem] p-8 md:p-12 shadow-2xl relative overflow-hidden border border-white/5">
-                                            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                                            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none text-white">
                                                 <Icon name="brain-circuit" className="w-80 h-80" />
                                             </div>
                                             <div className="relative z-10">
-                                                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 border border-white/10">
+                                                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 border border-white/10 text-white">
                                                     <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
                                                     IA & Tecnologia
                                                 </div>
                                                 
-                                                <div className="p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 text-left">
-                                                    <div className="flex items-center gap-4 mb-6">
+                                                <div className="p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 text-left shadow-2xl">
+                                                    <div className="flex items-center gap-4 mb-6 text-white">
                                                         <Icon name="wrench" className="w-10 h-10 text-purple-400" />
                                                         <h3 className="font-black text-2xl uppercase tracking-tighter">Notebook LM</h3>
                                                     </div>
