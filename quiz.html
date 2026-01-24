@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Técnico - Prof.ª Priscila da BCK</title>
+    <!-- Usando Tailwind CSS para um design limpo e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones para visual profissional -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        .header-bck {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(30, 64, 175, 0.3);
+        }
+        .card-elegante {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-elegante:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+        }
+        .option-label {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+        }
+        .option-label:hover {
+            background-color: #f8fafc;
+            border-color: #3b82f6;
+            transform: scale(1.02);
+        }
+        .option-input:checked + .option-label {
+            background-color: #eff6ff;
+            border-color: #2563eb;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        .explanation-card {
+            border-left: 5px solid #3b82f6;
+            background: linear-gradient(to right, #f8fafc 0%, white 100%);
+            transition: all 0.3s ease;
+        }
+        .explanation-card:hover {
+            border-left-color: #1d4ed8;
+            background: linear-gradient(to right, #f0f9ff 0%, white 100%);
+        }
+        .botao-principal {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+        .botao-principal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        }
+        .botao-secundario {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .botao-secundario:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(75, 85, 99, 0.3);
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+        }
+        .badge-pergunta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 12px;
+        }
+        .placar-destaque {
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(30, 64, 175, 0.1);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #f9fafb;
+        }
+        .table-striped tbody tr:hover {
+            background-color: #f0f9ff;
+        }
+        .header-bck::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 5%;
+            width: 90%;
+            height: 10px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Cabeçalho Aprimorado -->
+    <header class="header-bck shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent"></div>
+        <div class="container mx-auto px-4 py-8 relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="text-center md:text-left mb-6 md:mb-0">
+                    <div class="flex items-center justify-center md:justify-start space-x-3 mb-3">
+                        <div class="bg-white/20 p-3 rounded-full">
+                            <i class="fas fa-laptop-code text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-4xl font-bold text-white">Avaliação Técnica BCK</h1>
+                            <p class="text-blue-100 text-lg mt-1">Prof.ª Priscila da BCK</p>
+                        </div>
+                    </div>
+                    <p class="text-blue-100 text-sm max-w-2xl">Hardware, Windows & Ferramentas - Teste seu conhecimento técnico com 15 questões desafiadoras</p>
+                </div>
+                <div class="hidden lg:block">
+                    <div class="flex space-x-4">
+                        <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                            <i class="fas fa-microchip text-5xl text-white/80"></i>
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                            <i class="fas fa-cogs text-5xl text-white/80"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+        
+        <!-- Tela do Quiz -->
+        <div id="quiz-screen" class="card-elegante p-8">
+            <div class="mb-8 border-b pb-6">
+                <div class="flex items-center mb-3">
+                    <div class="bg-blue-100 p-2 rounded-lg mr-3">
+                        <i class="fas fa-question-circle text-2xl text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Questões de Múltipla Escolha</h2>
+                        <p class="text-gray-500">Selecione a melhor alternativa para cada questão técnica. Boa sorte!</p>
+                    </div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4 mt-4">
+                    <div class="flex items-center text-blue-700">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <p class="text-sm">Todas as 15 questões devem ser respondidas antes de finalizar o quiz.</p>
+                    </div>
+                </div>
+            </div>
+
+            <form id="quiz-form">
+                <div id="questions-container" class="space-y-10">
+                    <!-- Perguntas inseridas via JS -->
+                </div>
+
+                <div id="error-msg" class="hidden mt-8 p-5 bg-red-50 text-red-700 rounded-xl text-center font-semibold border border-red-200 shadow-sm">
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-xl mr-3"></i>
+                        <span class="text-lg">Por favor, responda a todas as questões antes de finalizar.</span>
+                    </div>
+                </div>
+
+                <button type="button" onclick="submitQuiz()" class="mt-10 w-full botao-principal py-5 px-6 rounded-xl text-lg flex items-center justify-center space-x-3">
+                    <i class="fas fa-check-circle text-xl"></i>
+                    <span>Finalizar Quiz e Ver Resultado</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Tela de Resultados (Inicialmente oculta) -->
+        <div id="result-screen" class="hidden animate-fade-in">
+            
+            <!-- Placar de Resultados -->
+            <div class="card-elegante p-10 text-center mb-10 border-t-4 border-blue-600">
+                <div class="flex flex-col items-center">
+                    <div class="bg-green-100 p-4 rounded-full mb-6">
+                        <i class="fas fa-trophy text-5xl text-green-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Quiz Concluído!</h2>
+                    <p class="text-gray-500 text-lg mb-8 max-w-2xl mx-auto">Confira abaixo o seu desempenho técnico e aprenda com as explicações detalhadas.</p>
+                    
+                    <div class="mb-8">
+                        <div class="placar-destaque" id="final-score-display">0/15</div>
+                        <div class="text-gray-400 font-semibold uppercase tracking-wider text-sm mt-2">Sua Pontuação</div>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center gap-6 mt-6">
+                        <div class="bg-blue-50 rounded-xl p-5 min-w-[150px]">
+                            <div class="text-3xl font-bold text-blue-600" id="correct-count">0</div>
+                            <div class="text-gray-600 text-sm mt-1">Corretas</div>
+                        </div>
+                        <div class="bg-red-50 rounded-xl p-5 min-w-[150px]">
+                            <div class="text-3xl font-bold text-red-600" id="incorrect-count">0</div>
+                            <div class="text-gray-600 text-sm mt-1">Incorretas</div>
+                        </div>
+                        <div class="bg-yellow-50 rounded-xl p-5 min-w-[150px]">
+                            <div class="text-3xl font-bold text-yellow-600" id="percentage">0%</div>
+                            <div class="text-gray-600 text-sm mt-1">Percentual</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dicionário Técnico -->
+            <div class="card-elegante p-8 mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                        <i class="fas fa-book text-2xl text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">📚 Glossário de Termos Técnicos</h3>
+                        <p class="text-gray-500">Traduções e significados para você dominar a nomenclatura técnica</p>
+                    </div>
+                </div>
+                
+                <div class="overflow-hidden rounded-xl border border-gray-200">
+                    <table class="min-w-full text-sm table-striped">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-8 py-4 text-left font-bold text-gray-700 uppercase tracking-wider border-b">Termo em Inglês</th>
+                                <th class="px-8 py-4 text-left font-bold text-gray-700 uppercase tracking-wider border-b">Tradução em Português</th>
+                                <th class="px-8 py-4 text-left font-bold text-gray-700 uppercase tracking-wider border-b">Significado Técnico</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr><td class="px-8 py-4 font-medium text-gray-900">Quiz Complete</td><td class="px-8 py-4">Quiz Concluído</td><td class="px-8 py-4 text-gray-600">Indica que você finalizou todas as questões da avaliação</td></tr>
+                            <tr><td class="px-8 py-4 font-medium text-gray-900">Your Score</td><td class="px-8 py-4">Sua Pontuação</td><td class="px-8 py-4 text-gray-600">Nota final obtida no teste, mostrando seu desempenho</td></tr>
+                            <tr><td class="px-8 py-4 font-medium text-gray-900">Correct</td><td class="px-8 py-4">Correto</td><td class="px-8 py-4 text-gray-600">Questões que você acertou com a resposta certa</td></tr>
+                            <tr><td class="px-8 py-4 font-medium text-gray-900">Incorrect</td><td class="px-8 py-4">Incorreto</td><td class="px-8 py-4 text-gray-600">Questões que você errou, indicando áreas para estudo</td></tr>
+                            <tr><td class="px-8 py-4 font-medium text-gray-900">Retake Quiz</td><td class="px-8 py-4">Refazer Quiz</td><td class="px-8 py-4 text-gray-600">Opção para reiniciar a avaliação e tentar novamente</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gabarito Comentado -->
+            <div class="card-elegante p-8">
+                <div class="flex items-center mb-8">
+                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                        <i class="fas fa-graduation-cap text-2xl text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">✅ Gabarito Comentado</h3>
+                        <p class="text-gray-500">Explicações detalhadas da Prof.ª Priscila da BCK para cada questão</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6" id="gabarito-container">
+                    <!-- Gabarito será inserido dinamicamente -->
+                </div>
+
+                <button onclick="location.reload()" class="mt-10 w-full botao-secundario py-4 px-6 rounded-xl text-lg flex items-center justify-center space-x-3">
+                    <i class="fas fa-redo-alt"></i>
+                    <span>Refazer Quiz</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé Personalizado -->
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start space-x-2 mb-2">
+                        <i class="fas fa-heart text-red-400"></i>
+                        <p class="text-lg font-medium">Desenvolvido por <span class="text-blue-300">Prof.ª Priscila da BCK</span></p>
+                    </div>
+                    <p class="text-sm">Soluções em TI & Educação Técnica de Excelência</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-windows text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-microchip text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-laptop-medical text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-6 pt-6 text-center text-sm">
+                <p>© 2026 BCK Tecnologia. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Banco de Dados das Questões
+        const questions = [
+            {
+                q: "Qual chave criar em HKEY_LOCAL_MACHINE\\SYSTEM\\Setup para pular verificações?",
+                options: ["SetupConfig", "LabConfig", "BypassConfig", "WinSetup"],
+                a: 1,
+                explanation: "O instalador procura configurações de 'Laboratório' (Lab) para pular verificações de hardware."
+            },
+            {
+                q: "Qual comando é usado para pular a exigência de internet no OOBE?",
+                options: ["ipconfig /release", "netsh winsock reset", "oobe\\bypassnro", "skip\\internet"],
+                a: 2,
+                explanation: "OOBE = Out of Box Experience; NRO = Network Requirement Option."
+            },
+            {
+                q: "O que significa o ícone amarelo com exclamação no Gerenciador de Dispositivos?",
+                options: ["Dispositivo funcionando perfeitamente", "Driver ausente ou erro no dispositivo", "Dispositivo desativado pelo usuário", "Atualização pendente do Windows"],
+                a: 1,
+                explanation: "O hardware existe, mas o Windows não tem o manual de instruções (driver) para usá-lo."
+            },
+            {
+                q: "Qual tabela de partição é necessária para o modo UEFI nativo?",
+                options: ["MBR", "FAT32", "NTFS", "GPT"],
+                a: 3,
+                explanation: "Sistemas modernos exigem GPT. MBR é para BIOS antiga (Legacy)."
+            },
+            {
+                q: "Qual o comando correto no Winget para instalar o Chrome?",
+                options: ["winget get Chrome", "winget install Google.Chrome", "winget download Google Chrome", "apt-get install chrome"],
+                a: 1,
+                explanation: "A sintaxe é install + ID do pacote."
+            },
+            {
+                q: "Qual a função principal do Chipset?",
+                options: ["Gerar gráficos 3D", "Armazenar o BIOS", "Gerenciar comunicação entre CPU, RAM e periféricos", "Resfriar o processador"],
+                a: 2,
+                explanation: "É o 'maestro' da placa-mãe, coordenando todos os componentes."
+            },
+            {
+                q: "Qual o tamanho máximo de disco suportado pelo particionamento MBR?",
+                options: ["1 TB", "2 TB", "4 TB", "ilimitado"],
+                a: 1,
+                explanation: "Limitação matemática da tecnologia de 32 bits antiga."
+            },
+            {
+                q: "O que se deve checar obrigatoriamente antes de formatar um disco?",
+                options: ["A cor do cabo SATA", "O S.M.A.R.T. do disco", "A voltagem da fonte", "O driver de áudio"],
+                a: 1,
+                explanation: "Não adianta pintar a casa (formatar) se a parede vai cair (disco ruim)."
+            },
+            {
+                q: "O que o TPM 2.0 protege principalmente?",
+                options: ["A velocidade da internet", "O FPS em jogos", "Chaves de criptografia (BitLocker)", "A temperatura da CPU"],
+                a: 2,
+                explanation: "É um cofre físico soldado na placa-mãe para proteger dados sensíveis."
+            },
+            {
+                q: "Qual a vantagem de usar o Rufus em hardware antigo?",
+                options: ["Aumenta a memória RAM", "Remove requisitos como TPM e Secure Boot", "Instala drivers automaticamente", "Formata mais rápido"],
+                a: 1,
+                explanation: "Ele edita a ISO para permitir a instalação em PCs não homologados pelo fabricante."
+            },
+            {
+                q: "Qual a melhor analogia para a partição EFI?",
+                options: ["O quadro de força da casa", "A sala de estar", "O encanamento", "A garagem"],
+                a: 0,
+                explanation: "Sem ela, o sistema não 'liga' (não dá boot), assim como uma casa sem quadro de força."
+            },
+            {
+                q: "Qual comando do Winget atualiza todos os programas instalados?",
+                options: ["winget update --now", "winget upgrade --all", "winget refresh", "winget install --update"],
+                a: 1,
+                explanation: "Verifica e aplica atualizações em lote para todos os programas gerenciados pelo Winget."
+            },
+            {
+                q: "Como se deve testar corretamente portas USB?",
+                options: ["Apenas conectando um mouse", "Olhando se a luz acende", "Leitura e escrita (copiar arquivos)", "Medindo a voltagem com multímetro apenas"],
+                a: 2,
+                explanation: "Só conectar não prova que há transferência de dados, apenas energia. É necessário testar a comunicação completa."
+            },
+            {
+                q: "Além de TPM e SecureBoot, qual é o outro bypass comum para máquinas fracas?",
+                options: ["BypassCPUCheck", "BypassStorageCheck", "BypassRAMCheck", "BypassVideoCheck"],
+                a: 2,
+                explanation: "Permite instalar sistemas operacionais em máquinas com pouca memória RAM."
+            },
+            {
+                q: "Na analogia entre Sistema e Programa, qual a relação correta?",
+                options: ["Sistema é o ator; Programa é o palco", "Sistema é o palco; Programa é o ator", "Ambos são a plateia", "Sistema é o roteiro; Programa é o diretor"],
+                a: 1,
+                explanation: "O sistema fornece a base e os recursos onde o programa atua e executa suas funções."
+            }
+        ];
+
+        // Carregar Questões
+        window.onload = function() {
+            const container = document.getElementById('questions-container');
+            
+            questions.forEach((item, index) => {
+                const questionHTML = `
+                    <div class="question-block card-elegante p-6">
+                        <div class="flex items-start mb-4">
+                            <span class="badge-pergunta">${index + 1}</span>
+                            <h3 class="font-bold text-xl text-gray-800 flex-1">${item.q}</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${item.options.map((opt, i) => `
+                                <div>
+                                    <input type="radio" name="q${index}" id="q${index}_opt${i}" value="${i}" class="hidden option-input">
+                                    <label for="q${index}_opt${i}" class="option-label block w-full p-4 rounded-xl bg-white text-gray-700">
+                                        <div class="flex items-center">
+                                            <div class="w-5 h-5 rounded-full border-2 border-gray-300 mr-4 flex-shrink-0 flex items-center justify-center dot-indicator transition-all">
+                                                <div class="w-2 h-2 rounded-full bg-transparent"></div>
+                                            </div>
+                                            <span class="text-base">${opt}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += questionHTML;
+            });
+            
+            // Carregar gabarito
+            const gabaritoContainer = document.getElementById('gabarito-container');
+            questions.forEach((item, index) => {
+                const gabaritoHTML = `
+                    <div class="explanation-card p-5 rounded-r-xl">
+                        <div class="flex items-start">
+                            <div class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold mr-4 mt-1">
+                                Questão ${index + 1}
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-900 text-lg">${item.q}</h4>
+                                <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                                    <p class="text-gray-700"><strong class="text-green-600">✓ Resposta Correta:</strong> ${item.options[item.a]}</p>
+                                </div>
+                                <div class="mt-3 p-3 bg-blue-50 rounded-lg">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-lightbulb text-blue-500 mt-1 mr-3"></i>
+                                        <p class="text-gray-600 italic">${item.explanation}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                gabaritoContainer.innerHTML += gabaritoHTML;
+            });
+        };
+
+        // Estilo customizado para os radio buttons
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .option-input:checked + .option-label {
+                border-color: #2563eb;
+                background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            }
+            .option-input:checked + .option-label .dot-indicator {
+                border-color: #2563eb;
+                background-color: #2563eb;
+                box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            }
+            .option-input:checked + .option-label .dot-indicator div {
+                background-color: white;
+            }
+        `;
+        document.head.appendChild(style);
+
+        function submitQuiz() {
+            const errorMsg = document.getElementById('error-msg');
+            let score = 0;
+            let answeredCount = 0;
+            const userAnswers = [];
+
+            // Calcular nota e verificar preenchimento
+            questions.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected) {
+                    answeredCount++;
+                    const answerValue = parseInt(selected.value);
+                    userAnswers.push({
+                        questionIndex: index,
+                        selected: answerValue,
+                        isCorrect: answerValue === item.a
+                    });
+                    if (answerValue === item.a) {
+                        score++;
+                    }
+                } else {
+                    userAnswers.push({
+                        questionIndex: index,
+                        selected: null,
+                        isCorrect: false
+                    });
+                }
+            });
+
+            // Validação
+            if (answeredCount < questions.length) {
+                errorMsg.classList.remove('hidden');
+                errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+
+            // Troca de tela
+            document.getElementById('quiz-screen').style.display = 'none';
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.classList.remove('hidden');
+            
+            // Atualizar estatísticas
+            document.getElementById('final-score-display').innerText = `${score}/${questions.length}`;
+            document.getElementById('correct-count').innerText = score;
+            document.getElementById('incorrect-count').innerText = questions.length - score;
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('percentage').innerText = `${percentage}%`;
+            
+            // Destacar erros e acertos no gabarito
+            userAnswers.forEach(answer => {
+                const questionElement = document.querySelector(`#gabarito-container > div:nth-child(${answer.questionIndex + 1})`);
+                if (questionElement) {
+                    if (answer.selected === null) {
+                        questionElement.classList.add('border-red-300');
+                        questionElement.querySelector('.bg-green-50').classList.replace('bg-green-50', 'bg-red-50');
+                        questionElement.querySelector('.text-green-600').classList.replace('text-green-600', 'text-red-600');
+                        questionElement.querySelector('strong').textContent = "✗ Não Respondida";
+                    } else if (!answer.isCorrect) {
+                        questionElement.classList.add('border-red-300');
+                        const respostaUsuario = questions[answer.questionIndex].options[answer.selected];
+                        const respostaCorreta = questions[answer.questionIndex].options[questions[answer.questionIndex].a];
+                        
+                        const respostaDiv = questionElement.querySelector('.bg-green-50');
+                        respostaDiv.innerHTML = `
+                            <p class="text-gray-700"><strong class="text-green-600">✓ Resposta Correta:</strong> ${respostaCorreta}</p>
+                            <p class="text-gray-700 mt-2"><strong class="text-red-600">✗ Sua Resposta:</strong> ${respostaUsuario}</p>
+                        `;
+                    }
+                }
+            });
+
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
