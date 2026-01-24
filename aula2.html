@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula de Hardware - SYSTA</title>
+    
+    <!-- Tratamento de Erro Global -->
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.getElementById('root').innerHTML = `
+                <div style="font-family:sans-serif; text-align:center; padding:50px; color:#721c24; background-color:#f8d7da;">
+                    <h2 style="margin-bottom:10px;">Ops! Ocorreu um erro técnico.</h2>
+                    <p>O navegador não conseguiu carregar a apresentação.</p>
+                    <hr style="border:0; border-top:1px solid #f5c6cb; margin:20px 0;">
+                    <p style="font-family:monospace; font-size:12px; text-align:left; background:white; padding:10px; border:1px solid #f5c6cb;">
+                        ${message} <br>
+                        Fonte: ${source}:${lineno}
+                    </p>
+                    <p style="margin-top:20px;">Verifique sua conexão com a internet, pois este arquivo precisa baixar as bibliotecas do React.</p>
+                </div>
+            `;
+        };
+    </script>
+
+    <!-- Bibliotecas React e Tailwind via CDNJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; }
+        .slide-container { animation: fadeIn 0.5s ease-in-out; }
+        .spin-slow { animation: spin 4s linear infinite; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #root { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .typing-effect { border-right: 2px solid white; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { border-color: transparent; } }
+    </style>
+</head>
+<body>
+    <div id="root">Carregando apresentação...</div>
+
+    <script type="text/babel">
+        const { useState, useEffect, Component } = React;
+
+        // --- Error Boundary ---
+        class ErrorBoundary extends Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false, error: null };
+            }
+            static getDerivedStateFromError(error) {
+                return { hasError: true, error };
+            }
+            componentDidCatch(error, errorInfo) {
+                console.error("Erro na apresentação:", error, errorInfo);
+            }
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 max-w-lg mx-auto">
+                            <p className="font-bold">Erro interno no Slide.</p>
+                            <p className="text-sm mt-2">{this.state.error && this.state.error.toString()}</p>
+                        </div>
+                    );
+                }
+                return this.props.children;
+            }
+        }
+
+        // --- Ícones SVG ---
+        const IconMonitor = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        );
+        const IconCpu = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+        );
+        const IconSearch = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        );
+        const IconMemory = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 19v-3"></path><path d="M10 19v-3"></path><path d="M14 19v-3"></path><path d="M18 19v-3"></path><path d="M8 11V9"></path><path d="M16 11V9"></path><path d="M12 11V9"></path><path d="M2 15h20"></path><path d="M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1.1a2 2 0 0 0 0 3.8v1.1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1.1a2 2 0 0 0 0-3.8V7z"></path></svg>
+        );
+        const IconLayers = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        );
+        const IconDatabase = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        );
+        const IconHardDrive = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="12" x2="2" y2="12"></line><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path><line x1="6" y1="16" x2="6.01" y2="16"></line><line x1="10" y1="16" x2="10.01" y2="16"></line></svg>
+        );
+        const IconAlert = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        );
+        const IconCheck = ({ size = 40, color="currentColor" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        );
+        const IconArrowLeft = ({ size = 20 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        );
+        const IconArrowRight = ({ size = 20 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        );
+        const IconGpu = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8v4"></path><path d="M16 12h-4"></path><path d="M8 12h4"></path></svg>
+        );
+        const IconBattery = ({ size = 40 }) => (
+             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect><line x1="23" y1="13" x2="23" y2="11"></line></svg>
+        );
+        const IconShop = ({ size = 40 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        );
+
+        // --- Componentes Visuais ---
+
+        const SlideHeader = ({ title, subtitle, icon }) => (
+            <div className="mb-8 border-b-2 border-blue-500 pb-4">
+                <div className="flex items-center gap-3 text-blue-700">
+                    {icon}
+                    <h1 className="text-4xl font-bold">{title}</h1>
+                </div>
+                <p className="text-xl text-gray-500 mt-2">{subtitle}</p>
+            </div>
+        );
+
+        const IntelAmdVisual = () => (
+            <div className="flex justify-center gap-8 mt-8">
+                <div className="bg-blue-50 border-2 border-blue-600 rounded-xl p-6 w-1/2 shadow-lg hover:scale-105 transition">
+                    <h2 className="text-3xl font-bold text-blue-700 mb-4 text-center">INTEL Core</h2>
+                    <div className="space-y-2">
+                        <div className="bg-blue-200 p-2 rounded text-center text-sm">i3 (Básico)</div>
+                        <div className="bg-blue-400 p-2 rounded text-center text-white font-bold">i5 (Intermediário)</div>
+                        <div className="bg-blue-700 p-2 rounded text-center text-white font-extrabold">i7 / i9 (Alta Performance)</div>
+                    </div>
+                </div>
+                <div className="bg-orange-50 border-2 border-red-600 rounded-xl p-6 w-1/2 shadow-lg hover:scale-105 transition">
+                    <h2 className="text-3xl font-bold text-red-600 mb-4 text-center">AMD Ryzen</h2>
+                    <div className="space-y-2">
+                        <div className="bg-orange-200 p-2 rounded text-center text-sm">Ryzen 3 (Básico)</div>
+                        <div className="bg-orange-400 p-2 rounded text-center text-white font-bold">Ryzen 5 (Intermediário)</div>
+                        <div className="bg-red-600 p-2 rounded text-center text-white font-extrabold">Ryzen 7 / 9 (Alta Performance)</div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const NamingVisual = () => (
+            <div className="flex flex-col items-center justify-center mt-10">
+                <div className="text-6xl font-mono font-bold bg-gray-800 text-white p-6 rounded-lg shadow-xl tracking-wider">
+                    <span className="text-blue-400">i5</span>-<span className="text-green-400">11</span>35<span className="text-yellow-400">G7</span>
+                </div>
+                <div className="flex gap-4 mt-4 w-full justify-center text-center">
+                    <div className="w-1/4">
+                        <div className="h-4 w-1 bg-blue-400 mx-auto h-8 mb-2"></div>
+                        <h3 className="font-bold text-blue-600">Família</h3>
+                        <p className="text-sm">Nível de performance</p>
+                    </div>
+                    <div className="w-1/4">
+                        <div className="h-4 w-1 bg-green-400 mx-auto h-8 mb-2"></div>
+                        <h3 className="font-bold text-green-600">Geração</h3>
+                        <p className="text-sm">Quanto maior, mais novo (11ª)</p>
+                    </div>
+                    <div className="w-1/4">
+                         <div className="h-4 w-1 bg-yellow-400 mx-auto h-8 mb-2"></div>
+                        <h3 className="font-bold text-yellow-600">Sufixo</h3>
+                        <p className="text-sm">U/G = Economia<br/>H = Performance</p>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const RamNotchVisual = () => (
+            <div className="flex flex-col gap-6 mt-6 items-center">
+                {/* DDR3 */}
+                <div className="relative w-3/4 h-16 bg-green-600 rounded-md border-b-4 border-yellow-500 flex items-end shadow-md opacity-75">
+                    <span className="absolute top-2 left-4 text-white font-bold font-mono">DDR3</span>
+                    <div className="w-2 h-4 bg-gray-100 absolute bottom-0 left-1/3"></div> 
+                    <div className="w-full flex justify-between px-2 pb-1"><div className="w-2 h-2 bg-yellow-300 rounded-full"></div><div className="w-2 h-2 bg-yellow-300 rounded-full"></div></div>
+                </div>
+                
+                {/* DDR4 */}
+                <div className="relative w-3/4 h-16 bg-blue-600 rounded-md border-b-4 border-yellow-500 flex items-end shadow-md">
+                    <span className="absolute top-2 left-4 text-white font-bold font-mono">DDR4</span>
+                    <div className="w-2 h-4 bg-gray-100 absolute bottom-0 left-1/2"></div>
+                     <div className="w-full flex justify-between px-2 pb-1"><div className="w-2 h-2 bg-yellow-300 rounded-full"></div><div className="w-2 h-2 bg-yellow-300 rounded-full"></div></div>
+                </div>
+
+                {/* DDR5 - Novo */}
+                <div className="relative w-3/4 h-16 bg-purple-600 rounded-md border-b-4 border-yellow-500 flex items-end shadow-md">
+                    <span className="absolute top-2 left-4 text-white font-bold font-mono">DDR5</span>
+                    <div className="bg-yellow-200 text-xs px-2 rounded absolute top-2 right-2 text-purple-900 font-bold">Mais atual</div>
+                    <div className="w-2 h-4 bg-gray-100 absolute bottom-0" style={{left: '46%'}}></div>
+                     <div className="w-full flex justify-between px-2 pb-1"><div className="w-2 h-2 bg-yellow-300 rounded-full"></div><div className="w-2 h-2 bg-yellow-300 rounded-full"></div></div>
+                </div>
+
+                 <div className="text-red-500 font-bold flex items-center gap-2 mt-2">
+                    <IconAlert size={24}/>
+                    <span>O encaixe muda a cada geração!</span>
+                </div>
+            </div>
+        );
+
+        const DualChannelVisual = () => (
+             <div className="flex justify-center gap-12 mt-8">
+                <div className="text-center">
+                    <h3 className="text-xl font-bold mb-2 text-gray-500">Single Channel</h3>
+                    <div className="w-32 h-64 bg-gray-800 border-x-4 border-yellow-400 relative overflow-hidden flex justify-center">
+                         <div className="absolute top-0 bottom-0 border-l-2 border-dashed border-white opacity-50"></div>
+                         <div className="absolute top-10 animate-bounce"><div className="w-12 h-16 bg-blue-500 rounded flex items-center justify-center text-white text-xs">DADOS</div></div>
+                    </div>
+                    <p className="mt-2 text-sm">Estrada de 1 Faixa</p>
+                </div>
+                
+                 <div className="text-center">
+                    <h3 className="text-xl font-bold mb-2 text-green-600">Dual Channel</h3>
+                    <div className="w-64 h-64 bg-gray-800 border-x-4 border-yellow-400 relative overflow-hidden flex justify-around">
+                         <div className="absolute top-0 bottom-0 left-1/2 border-l-2 border-dashed border-white"></div>
+                         <div className="absolute top-10 left-8 animate-bounce"><div className="w-12 h-16 bg-blue-500 rounded flex items-center justify-center text-white text-xs">DADOS</div></div>
+                         <div className="absolute top-24 right-8 animate-bounce"><div className="w-12 h-16 bg-blue-500 rounded flex items-center justify-center text-white text-xs">DADOS</div></div>
+                    </div>
+                    <p className="mt-2 text-sm font-bold">Estrada de 2 Faixas (Dobro de velocidade)</p>
+                </div>
+            </div>
+        );
+
+        const RamCapacityVisual = () => (
+            <div className="flex justify-center gap-6 mt-12 items-stretch">
+                <div className="bg-green-50 border-2 border-green-500 p-6 rounded-xl w-1/3 text-center flex flex-col justify-between shadow-sm hover:shadow-lg transition">
+                   <div>
+                       <h3 className="text-5xl font-bold text-green-600 mb-2">8 GB</h3>
+                       <p className="font-bold text-lg text-gray-700 mb-4 bg-green-200 rounded-full py-1">Básico</p>
+                   </div>
+                   <ul className="text-sm text-gray-600 space-y-2 text-left bg-white p-4 rounded">
+                        <li className="flex gap-2"><IconCheck size={16} color="green"/> Navegação Web</li>
+                        <li className="flex gap-2"><IconCheck size={16} color="green"/> Pacote Office</li>
+                        <li className="flex gap-2"><IconCheck size={16} color="green"/> Estudos / YouTube</li>
+                   </ul>
+                </div>
+
+                <div className="bg-blue-50 border-4 border-blue-500 p-6 rounded-xl w-1/3 text-center transform scale-105 shadow-2xl z-10 flex flex-col justify-between">
+                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase">Recomendado</div>
+                   <div>
+                       <h3 className="text-5xl font-bold text-blue-700 mb-2">16 GB</h3>
+                       <p className="font-bold text-lg text-gray-700 mb-4 bg-blue-200 rounded-full py-1">Intermediário</p>
+                   </div>
+                   <ul className="text-sm text-gray-600 space-y-2 text-left bg-white p-4 rounded">
+                        <li className="flex gap-2"><IconCheck size={16} color="blue"/> Multitarefas (Muitas abas)</li>
+                        <li className="flex gap-2"><IconCheck size={16} color="blue"/> Jogos Leves/Médios</li>
+                        <li className="flex gap-2"><IconCheck size={16} color="blue"/> Edição de Fotos Simples</li>
+                   </ul>
+                </div>
+
+                <div className="bg-purple-50 border-2 border-purple-500 p-6 rounded-xl w-1/3 text-center flex flex-col justify-between shadow-sm hover:shadow-lg transition">
+                   <div>
+                       <h3 className="text-5xl font-bold text-purple-700 mb-2">32 GB+</h3>
+                       <p className="font-bold text-lg text-gray-700 mb-4 bg-purple-200 rounded-full py-1">Avançado</p>
+                   </div>
+                   <ul className="text-sm text-gray-600 space-y-2 text-left bg-white p-4 rounded">
+                        <li className="flex gap-2"><IconCheck size={16} color="purple"/> Edição de Vídeo 4K</li>
+                        <li className="flex gap-2"><IconCheck size={16} color="purple"/> Renderização 3D</li>
+                        <li className="flex gap-2"><IconCheck size={16} color="purple"/> Máquinas Virtuais</li>
+                        <li className="flex gap-2"><IconCheck size={16} color="purple"/> Jogos Pesados</li>
+                   </ul>
+                </div>
+            </div>
+        );
+
+        const GpuVisual = () => (
+            <div className="flex justify-center gap-8 mt-8 items-stretch">
+                {/* Integrada */}
+                <div className="bg-gray-50 border-2 border-gray-400 p-6 rounded-xl w-1/2 text-center shadow-md">
+                    <h3 className="text-2xl font-bold text-gray-700 mb-4">Placa Integrada (iGPU)</h3>
+                    <div className="bg-blue-100 p-4 rounded-full w-24 h-24 mx-auto flex items-center justify-center mb-4 border-2 border-blue-300">
+                        <span className="text-sm font-bold text-blue-800">Dentro da CPU</span>
+                    </div>
+                    <ul className="text-sm text-gray-600 mb-4 text-left list-disc pl-6 space-y-1">
+                        <li>Usa a memória <strong>RAM</strong> do sistema.</li>
+                        <li>Bom para: Office, Netflix, Navegação.</li>
+                    </ul>
+                    <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold inline-block">Economiza Bateria</div>
+                </div>
+
+                {/* Dedicada */}
+                <div className="bg-gray-900 border-4 border-green-500 p-6 rounded-xl w-1/2 text-center shadow-2xl text-white transform scale-105">
+                    <h3 className="text-2xl font-bold text-green-400 mb-4">Placa Dedicada (GPU)</h3>
+                    <div className="bg-gray-800 p-4 rounded w-32 h-20 mx-auto flex items-center justify-center mb-4 border border-gray-600 relative">
+                         {/* Simple fan representation */}
+                        <div className="w-12 h-12 border-2 border-green-500 rounded-full spin-slow border-t-transparent"></div>
+                        <span className="absolute bottom-1 text-[10px] text-gray-400 font-mono">GTX / RTX</span>
+                    </div>
+                    <ul className="text-gray-300 mb-4 text-sm text-left list-disc pl-6 space-y-1">
+                        <li>Tem memória própria <strong>(VRAM)</strong>.</li>
+                        <li>Não consome a RAM principal.</li>
+                        <li>Bom para: Jogos, Render 3D, Edição Pesada.</li>
+                    </ul>
+                    <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold inline-block">Alta Performance</div>
+                </div>
+            </div>
+        );
+
+        const StorageVisual = () => (
+            <div className="grid grid-cols-3 gap-4 mt-8 text-center">
+                <div className="bg-white p-4 rounded-xl shadow border-2 border-gray-200 opacity-75">
+                    <IconHardDrive size={64} />
+                    <h3 className="font-bold text-gray-700">HDD (Disco Rígido)</h3>
+                    <p className="text-sm text-gray-500 mt-2">Mecânico & Lento</p>
+                    <div className="mt-4 text-xs bg-gray-200 p-1 rounded inline-block">🐢 50-100 MB/s</div>
+                </div>
+                <div className="bg-white p-4 rounded-xl shadow border-2 border-blue-200">
+                    <div className="mx-auto w-16 h-24 bg-gray-800 rounded mb-4 border-4 border-gray-300 flex items-center justify-center text-white font-bold">SATA</div>
+                    <h3 className="font-bold text-blue-600">SSD SATA (2.5")</h3>
+                    <p className="text-sm text-gray-500 mt-2">Eletrônico & Rápido</p>
+                     <div className="mt-4 text-xs bg-blue-100 text-blue-800 p-1 rounded inline-block">🚗 500 MB/s</div>
+                </div>
+                <div className="bg-white p-4 rounded-xl shadow border-2 border-purple-500 transform scale-110 z-10">
+                    <div className="mx-auto w-8 h-24 bg-green-700 rounded mb-4 flex items-end justify-center pb-2"><div className="w-6 h-1 bg-gold-400 bg-yellow-400"></div></div>
+                    <h3 className="font-bold text-purple-600">SSD M.2 NVMe</h3>
+                    <p className="text-sm text-gray-500 mt-2">Conecta na Placa-mãe</p>
+                     <div className="mt-4 text-xs bg-purple-100 text-purple-800 p-1 rounded inline-block">🚀 3500+ MB/s</div>
+                </div>
+            </div>
+        );
+
+        const M2KeysVisual = () => (
+             <div className="flex flex-col items-center mt-6">
+                 <div className="flex gap-12">
+                    <div className="text-center">
+                        <div className="w-32 h-64 bg-green-700 rounded relative flex items-end mb-2">
+                             {/* B + M Key (SATA) - 2 cortes */}
+                             <div className="w-32 h-4 bg-yellow-400 absolute bottom-0 flex justify-between px-4">
+                                <div className="w-2 h-4 bg-white"></div> {/* Corte Esq */}
+                                <div className="w-2 h-4 bg-white"></div> {/* Corte Dir */}
+                             </div>
+                        </div>
+                        <h4 className="font-bold text-gray-600">M.2 SATA</h4>
+                        <p className="text-xs">2 Cortes (Chaves B+M)</p>
+                    </div>
+
+                    <div className="text-center">
+                        <div className="w-32 h-64 bg-green-700 rounded relative flex items-end mb-2 shadow-[0_0_20px_rgba(168,85,247,0.5)]">
+                             {/* M Key (NVMe) - 1 corte direita */}
+                             <div className="w-32 h-4 bg-yellow-400 absolute bottom-0 flex justify-end px-4">
+                                <div className="w-2 h-4 bg-white"></div> {/* Corte Dir */}
+                             </div>
+                        </div>
+                        <h4 className="font-bold text-purple-600">M.2 NVMe</h4>
+                        <p className="text-xs">1 Corte (Chave M)</p>
+                    </div>
+                 </div>
+                 <p className="mt-6 bg-yellow-100 p-4 rounded text-yellow-800 text-center max-w-lg border border-yellow-400">
+                    <strong>Atenção:</strong> O encaixe M.2 é o mesmo tamanho, mas a tecnologia é diferente. Verifique se o notebook aceita <strong>NVMe</strong> ou apenas <strong>SATA</strong>!
+                 </p>
+             </div>
+        );
+
+        const BatteryVisual = () => (
+            <div className="flex flex-col gap-6 items-center w-full">
+                
+                <div className="flex justify-between w-full gap-8">
+                     {/* Ciclos */}
+                    <div className="bg-white p-6 rounded-xl shadow border-l-4 border-blue-500 w-1/2">
+                        <h3 className="text-xl font-bold text-gray-700 mb-2">O que é um Ciclo?</h3>
+                        <div className="flex items-center gap-4">
+                            <div className="relative w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center">
+                                <div className="absolute w-full h-full rounded-full border-4 border-blue-500 border-t-transparent -rotate-45"></div>
+                                <span className="font-bold text-blue-600">100%</span>
+                            </div>
+                            <p className="text-sm text-gray-600">
+                                Não é plugar na tomada!<br/>
+                                1 Ciclo = <strong>Descarga total de 100%</strong> (acumulada).<br/>
+                                <span className="text-xs text-gray-400">(Ex: 50% hoje + 50% amanhã = 1 Ciclo)</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Saúde */}
+                    <div className="bg-white p-6 rounded-xl shadow border-l-4 border-green-500 w-1/2">
+                         <h3 className="text-xl font-bold text-gray-700 mb-2">Saúde (Health)</h3>
+                         <div className="space-y-3">
+                            <div>
+                                <div className="flex justify-between text-xs mb-1"><span>Capacidade de Design (Novo)</span> <span className="font-bold">45.000 mWh</span></div>
+                                <div className="w-full bg-gray-200 rounded-full h-2.5"><div className="bg-green-600 h-2.5 rounded-full" style={{width: '100%'}}></div></div>
+                            </div>
+                            <div>
+                                <div className="flex justify-between text-xs mb-1"><span>Capacidade Atual (Desgaste)</span> <span className="font-bold text-red-500">32.000 mWh</span></div>
+                                <div className="w-full bg-gray-200 rounded-full h-2.5"><div className="bg-red-500 h-2.5 rounded-full" style={{width: '70%'}}></div></div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+                {/* Dica de Comando */}
+                <div className="bg-gray-800 text-white p-4 rounded-lg font-mono text-sm w-full max-w-2xl shadow-lg border border-gray-600 flex flex-col gap-2">
+                    <span className="text-gray-400">// Para ver o relatório completo no Windows:</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-green-400">C:\&gt;</span>
+                        <span className="typing-effect">powercfg /batteryreport</span>
+                    </div>
+                </div>
+
+            </div>
+        );
+
+        const CpuZMockup = () => (
+            <div className="flex justify-center gap-4 mt-6">
+                {/* Janela CPU */}
+                <div className="w-64 bg-gray-200 border border-gray-400 rounded p-2 text-xs font-mono shadow-lg">
+                    <div className="bg-gray-300 mb-2 px-2 py-1 font-bold text-gray-700">CPU-Z - CPU Tab</div>
+                    <div className="bg-white border border-gray-300 p-2 space-y-1">
+                        <div className="flex justify-between border-b"><span>Name</span> <span className="font-bold">Intel Core i5 8250U</span></div>
+                        <div className="flex justify-between border-b"><span>Code Name</span> <span>Kaby Lake R</span></div>
+                        <div className="flex justify-between border-b"><span>Max TDP</span> <span className="text-red-500 font-bold">15.0 W</span></div>
+                        <div className="flex justify-between border-b"><span>Package</span> <span>Socket 1356 FCBGA</span></div>
+                    </div>
+                </div>
+                 {/* Janela Memory */}
+                 <div className="w-64 bg-gray-200 border border-gray-400 rounded p-2 text-xs font-mono shadow-lg">
+                    <div className="bg-gray-300 mb-2 px-2 py-1 font-bold text-gray-700">CPU-Z - Memory Tab</div>
+                    <div className="bg-white border border-gray-300 p-2 space-y-1">
+                        <div className="flex justify-between border-b"><span>Type</span> <span className="font-bold text-blue-600">DDR4</span></div>
+                        <div className="flex justify-between border-b"><span>Channel #</span> <span className="font-bold text-green-600">Dual</span></div>
+                        <div className="flex justify-between border-b"><span>Size</span> <span>16 GBytes</span></div>
+                        <div className="flex justify-between border-b"><span>DRAM Freq</span> <span>1200.5 MHz</span></div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const ChallengeCard = () => (
+            <div className="mt-6 max-w-2xl mx-auto">
+                <div className="bg-white p-8 rounded-xl shadow-2xl border-t-8 border-blue-600">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="bg-blue-100 p-3 rounded-full"><IconShop size={32} /></div>
+                        <h2 className="text-2xl font-bold">Desafio de Mercado</h2>
+                    </div>
+                    
+                    <div className="space-y-6 mb-6">
+                        <p className="text-lg text-gray-700">Sua missão é pesquisar e encontrar links de compra para:</p>
+                        
+                        <ul className="space-y-4">
+                            <li className="bg-green-50 p-4 rounded-lg border border-green-200 flex items-center gap-3">
+                                <div className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">1</div>
+                                <span className="font-semibold text-green-800">3 Modelos de Configuração Básica</span>
+                            </li>
+                            <li className="bg-blue-50 p-4 rounded-lg border border-blue-200 flex items-center gap-3">
+                                <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">2</div>
+                                <span className="font-semibold text-blue-800">3 Modelos de Configuração Intermediária</span>
+                            </li>
+                            <li className="bg-purple-50 p-4 rounded-lg border border-purple-200 flex items-center gap-3">
+                                <div className="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">3</div>
+                                <span className="font-semibold text-purple-800">3 Modelos de Configuração Avançada</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div className="text-center bg-blue-50 p-3 rounded text-blue-700 font-bold">
+                        Entrega: Envie os links ou prints dos modelos encontrados.
+                    </div>
+                </div>
+            </div>
+        );
+
+        // Aplicação Principal
+
+        const App = () => {
+            const [currentSlide, setCurrentSlide] = useState(0);
+
+            const slides = [
+                {
+                    title: "Hardware: Especificações",
+                    subtitle: "Entendendo o que define a performance de um Notebook.",
+                    icon: <IconMonitor size={40} />,
+                    content: (
+                        <div className="text-center mt-10">
+                            <h2 className="text-3xl font-bold text-gray-700">Bem-vinda à Aula 2</h2>
+                            <div className="mt-8 flex flex-col gap-6 max-w-4xl mx-auto items-center">
+                                {/* Linha 1: 3 Itens */}
+                                <div className="flex justify-center gap-6 w-full">
+                                    <div className="flex-1 p-4 bg-white rounded shadow text-blue-600 font-bold flex flex-col items-center gap-2">
+                                        <IconCpu size={32}/> Processador
+                                    </div>
+                                    <div className="flex-1 p-4 bg-white rounded shadow text-green-600 font-bold flex flex-col items-center gap-2">
+                                        <IconMemory size={32}/> Memória RAM
+                                    </div>
+                                    <div className="flex-1 p-4 bg-white rounded shadow text-purple-600 font-bold flex flex-col items-center gap-2">
+                                        <IconHardDrive size={32}/> Armazenamento
+                                    </div>
+                                </div>
+                                {/* Linha 2: 2 Itens Centralizados */}
+                                <div className="flex justify-center gap-6 w-2/3">
+                                    <div className="flex-1 p-4 bg-white rounded shadow text-red-600 font-bold flex flex-col items-center gap-2">
+                                        <IconGpu size={32}/> Placa de Vídeo
+                                    </div>
+                                    <div className="flex-1 p-4 bg-white rounded shadow text-yellow-600 font-bold flex flex-col items-center gap-2">
+                                        <IconBattery size={32}/> Bateria
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                },
+                {
+                    title: "O Cérebro: Processador (CPU)",
+                    subtitle: "Intel vs AMD",
+                    icon: <IconCpu size={40} />,
+                    content: <IntelAmdVisual />
+                },
+                {
+                    title: "Lendo as 'Letras Miúdas'",
+                    subtitle: "Entendendo Família, Geração e Sufixo",
+                    icon: <IconSearch size={40} />,
+                    content: <NamingVisual />
+                },
+                {
+                    title: "Memória RAM: Gerações",
+                    subtitle: "Por que uma memória nova não entra no notebook antigo?",
+                    icon: <IconMemory size={40} />,
+                    content: <RamNotchVisual />
+                },
+                {
+                    title: "RAM: Velocidade & Canais",
+                    subtitle: "Single Channel vs Dual Channel",
+                    icon: <IconLayers size={40} />,
+                    content: <DualChannelVisual />
+                },
+                {
+                    title: "Quantidade de Memória (RAM)",
+                    subtitle: "Quanto eu realmente preciso hoje?",
+                    icon: <IconDatabase size={40} />,
+                    content: <RamCapacityVisual />
+                },
+                {
+                    title: "Placa de Vídeo: Integrada vs Dedicada",
+                    subtitle: "Quem faz o trabalho pesado dos gráficos?",
+                    icon: <IconGpu size={40} />,
+                    content: <GpuVisual />
+                },
+                {
+                    title: "Armazenamento",
+                    subtitle: "Do HD ao NVMe",
+                    icon: <IconHardDrive size={40} />,
+                    content: <StorageVisual />
+                },
+                {
+                    title: "O Segredo do M.2",
+                    subtitle: "SATA vs NVMe: Cuidado com o encaixe!",
+                    icon: <IconAlert size={40} />,
+                    content: <M2KeysVisual />
+                },
+                 {
+                    title: "Bateria de Notebook: Saúde & Ciclos",
+                    subtitle: "Como cuidar da energia do seu portátil",
+                    icon: <IconBattery size={40} />,
+                    content: <BatteryVisual />
+                },
+                {
+                    title: "Diagnóstico via Software",
+                    subtitle: "Usando o CPU-Z para ver dentro da máquina",
+                    icon: <IconMonitor size={40} />,
+                    content: <CpuZMockup />
+                },
+                {
+                    title: "Atividade Prática",
+                    subtitle: "Simulação de Consultoria Real",
+                    icon: <IconCheck size={40} />,
+                    content: <ChallengeCard />
+                }
+            ];
+
+            const nextSlide = () => {
+                if (currentSlide < slides.length - 1) setCurrentSlide(currentSlide + 1);
+            };
+
+            const prevSlide = () => {
+                if (currentSlide > 0) setCurrentSlide(currentSlide - 1);
+            };
+
+             // Keyboard navigation
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.key === 'ArrowRight') nextSlide();
+                    if (e.key === 'ArrowLeft') prevSlide();
+                };
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [currentSlide]);
+
+            const CurrentContent = slides[currentSlide].content;
+
+            return (
+                <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[600px] flex flex-col relative m-4">
+                    
+                    {/* Slide Content */}
+                    <div className="p-12 flex-grow slide-container" key={currentSlide}>
+                        <SlideHeader 
+                            title={slides[currentSlide].title} 
+                            subtitle={slides[currentSlide].subtitle}
+                            icon={slides[currentSlide].icon}
+                        />
+                        {CurrentContent}
+                    </div>
+
+                    {/* Footer / Navigation */}
+                    <div className="bg-gray-100 p-4 border-t border-gray-300 flex justify-between items-center">
+                        <div className="text-gray-500 font-bold text-sm">
+                            SYSTA Education • Slide {currentSlide + 1} de {slides.length}
+                        </div>
+                        
+                        <div className="flex gap-4">
+                            <button 
+                                onClick={prevSlide}
+                                disabled={currentSlide === 0}
+                                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold transition ${currentSlide === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'}`}
+                            >
+                                <IconArrowLeft size={20} /> Anterior
+                            </button>
+                            <button 
+                                onClick={nextSlide}
+                                disabled={currentSlide === slides.length - 1}
+                                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold transition ${currentSlide === slides.length - 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'}`}
+                            >
+                                Próximo <IconArrowRight size={20} />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="h-2 bg-gray-200 w-full">
+                        <div 
+                            className="h-full bg-blue-500 transition-all duration-300"
+                            style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
+                        ></div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            <ErrorBoundary>
+                <App />
+            </ErrorBoundary>
+        );
+    </script>
+</body>
+</html>

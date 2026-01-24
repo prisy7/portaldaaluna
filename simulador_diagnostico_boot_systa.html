@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório de Diagnóstico - SYSTA</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #1a202c; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        .screen-content { font-family: 'Share Tech Mono', monospace; }
+        .led { width: 10px; height: 10px; border-radius: 50%; display: inline-block; transition: all 0.3s; }
+        .led-off { background-color: #4a5568; box-shadow: none; }
+        .led-on { background-color: #48bb78; box-shadow: 0 0 10px #48bb78; }
+        .led-error { background-color: #f56565; box-shadow: 0 0 10px #f56565; animation: blink 0.5s infinite; }
+        
+        .fan-blade { transition: transform 0.1s linear; }
+        .spinning { animation: spin 0.5s linear infinite; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        @keyframes flicker { 0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.95; } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Ícones ---
+        const IconCpu = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>;
+        const IconRam = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12h20"/><path d="M6 12v-4"/><path d="M10 12v-4"/><path d="M14 12v-4"/><path d="M18 12v-4"/><rect x="2" y="12" width="20" height="6" rx="2"/></svg>;
+        const IconHdd = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="12" rx="2"/><path d="M12 14a6 6 0 0 0-6-6"/><line x1="12" y1="14" x2="12.01" y2="14"/></svg>;
+        const IconFan = ({ spinning }) => (
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={spinning ? "spinning" : ""}>
+                <circle cx="12" cy="12" r="10"/><path d="M12 12L12 2"/><path d="M12 12L20.66 17"/><path d="M12 12L3.34 17"/>
+            </svg>
+        );
+
+        const DiagnosticSim = () => {
+            // Estado das Peças (Conectado = true/false)
+            const [parts, setParts] = useState({
+                cpu: true,
+                ram: true,
+                ssd: true,
+                video_cable: true
+            });
+
+            // Estado da Máquina
+            const [powerOn, setPowerOn] = useState(false);
+            const [screenState, setScreenState] = useState('off'); // off, black, bios, error_boot, windows, no_signal
+            const [feedback, setFeedback] = useState("Configure o hardware e ligue a máquina.");
+
+            // Resetar ao desligar
+            useEffect(() => {
+                if (!powerOn) {
+                    setScreenState('off');
+                    setFeedback("Máquina desligada.");
+                } else {
+                    runPostProcess();
+                }
+            }, [powerOn]);
+
+            const togglePart = (part) => {
+                setParts(prev => ({ ...prev, [part]: !prev[part] }));
+                // Se mexer na peça com PC ligado, ele desliga ou trava (simulação simples: desliga)
+                if (powerOn) {
+                    setPowerOn(false);
+                    setFeedback("⚠️ Você mexeu no hardware com o PC ligado! Ele desligou por segurança.");
+                }
+            };
+
+            const runPostProcess = () => {
+                setFeedback("Iniciando POST (Power-On Self-Test)...");
+                
+                setTimeout(() => {
+                    // 1. Checagem Elétrica Básica (CPU)
+                    if (!parts.cpu) {
+                        setPowerOn(false); // Desliga sozinho
+                        setFeedback("❌ ERRO CRÍTICO: Sem Processador. A placa-mãe não consegue nem iniciar a energia corretamente.");
+                        return;
+                    }
+
+                    // 2. Checagem de Vídeo/RAM (Vital)
+                    if (!parts.ram) {
+                        setScreenState('black');
+                        setFeedback("⚠️ LIGOU, MAS SEM VÍDEO! O cooler gira, leds acendem, mas sem RAM o processador não tem onde trabalhar. Tela Preta.");
+                        return;
+                    }
+
+                    // 3. Checagem de Cabo de Vídeo
+                    if (!parts.video_cable) {
+                        setScreenState('no_signal');
+                        setFeedback("⚠️ PC LIGADO, MAS MONITOR SEM SINAL. O computador está funcionando, mas você esqueceu o cabo HDMI/VGA.");
+                        return;
+                    }
+
+                    // 4. Checagem de Boot (Armazenamento)
+                    if (!parts.ssd) {
+                        setScreenState('bios');
+                        setTimeout(() => setScreenState('error_boot'), 2000);
+                        setFeedback("✅ DEU VÍDEO! O PC está vivo. Porém, não achou o Windows (Sem SSD). Entrou na BIOS ou pediu disco de Boot.");
+                        return;
+                    }
+
+                    // 5. Sucesso Total
+                    setScreenState('bios');
+                    setTimeout(() => {
+                        setScreenState('windows');
+                        setFeedback("🎉 SUCESSO! Hardware completo. O Windows carregou.");
+                    }, 2500);
+
+                }, 1000);
+            };
+
+            // Renderização da Tela do Monitor
+            const renderScreen = () => {
+                switch(screenState) {
+                    case 'off': return <div className="w-full h-full bg-gray-900 flex items-center justify-center text-gray-800">Desligado</div>;
+                    case 'black': return <div className="w-full h-full bg-black"></div>;
+                    case 'no_signal': return (
+                        <div className="w-full h-full bg-blue-900 flex flex-col items-center justify-center text-white animate-pulse">
+                            <div className="border-4 border-white p-4 font-bold">NO SIGNAL</div>
+                            <div className="text-xs mt-2">Check Video Cable</div>
+                        </div>
+                    );
+                    case 'bios': return (
+                        <div className="w-full h-full bg-black flex items-center justify-center">
+                            <div className="text-center">
+                                <h1 className="text-4xl font-bold text-blue-500 mb-2">SYSTA<span className="text-white">BIOS</span></h1>
+                                <p className="text-xs text-gray-400">Energy Star</p>
+                                <p className="text-xs text-gray-400 mt-4">Press DEL to enter Setup</p>
+                            </div>
+                        </div>
+                    );
+                    case 'error_boot': return (
+                        <div className="w-full h-full bg-black p-10 text-gray-300 font-mono text-left">
+                            <p>Intel UNDI, PXE-2.0 (build 083)</p>
+                            <p>Copyright (C) 1997-2000 Intel Corporation</p>
+                            <br/>
+                            <p>Checking Media Present......</p>
+                            <p>Media Present</p>
+                            <br/>
+                            <p className="text-white bg-red-900 inline-block px-1">No Bootable Device Found.</p>
+                            <p>Press any key to retry boot sequence_</p>
+                        </div>
+                    );
+                    case 'windows': return (
+                        <div className="w-full h-full bg-blue-600 flex flex-col items-center justify-center text-white">
+                            <div className="text-6xl mb-4">🪟</div>
+                            <h2 className="text-2xl font-light">Bem-vinda</h2>
+                            <div className="mt-4 animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+                    );
+                    default: return null;
+                }
+            };
+
+            return (
+                <div className="flex flex-col md:flex-row h-screen w-full bg-gray-900 p-4 gap-4">
+                    
+                    {/* Painel Esquerdo: O Computador */}
+                    <div className="flex-1 flex flex-col gap-4">
+                        
+                        {/* Monitor */}
+                        <div className="relative bg-gray-800 p-4 rounded-xl border-4 border-gray-700 shadow-2xl flex-1 min-h-[300px] flex flex-col items-center">
+                            <div className="w-full flex-1 bg-black rounded overflow-hidden relative shadow-inner border border-gray-600">
+                                {renderScreen()}
+                                {/* Reflexo da tela */}
+                                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none"></div>
+                            </div>
+                            <div className="mt-2 flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${screenState !== 'off' && parts.video_cable ? 'bg-green-400 shadow-[0_0_5px_lime]' : 'bg-gray-600'}`}></div>
+                                <span className="text-gray-500 font-bold text-xs tracking-widest">MONITOR</span>
+                            </div>
+                        </div>
+
+                        {/* Gabinete / Base */}
+                        <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl relative">
+                            <div className="flex justify-between items-center mb-6">
+                                <div className="flex items-center gap-4">
+                                    <button 
+                                        onClick={() => setPowerOn(!powerOn)}
+                                        className={`w-16 h-16 rounded-full border-4 flex items-center justify-center transition-all transform active:scale-95 ${powerOn ? 'border-green-500 text-green-500 shadow-[0_0_15px_rgba(72,187,120,0.5)]' : 'border-gray-500 text-gray-500 hover:border-gray-400 hover:text-gray-400'}`}
+                                    >
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                                    </button>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm text-gray-400 font-bold">POWER</span>
+                                        <span className="text-xs text-gray-500">{powerOn ? "LIGADO" : "DESLIGADO"}</span>
+                                    </div>
+                                </div>
+
+                                {/* Cooler Status */}
+                                <div className="flex flex-col items-center opacity-70">
+                                    <IconFan spinning={powerOn && parts.cpu} />
+                                    <span className="text-[10px] text-gray-500 mt-1">COOLER</span>
+                                </div>
+                            </div>
+
+                            {/* Feedback Box */}
+                            <div className={`p-4 rounded border-l-4 text-sm font-mono transition-all ${
+                                feedback.includes("SUCESSO") ? "bg-green-900/30 border-green-500 text-green-200" :
+                                feedback.includes("ERRO") || feedback.includes("sem VÍDEO") ? "bg-red-900/30 border-red-500 text-red-200" :
+                                feedback.includes("LIGADO") ? "bg-yellow-900/30 border-yellow-500 text-yellow-200" :
+                                "bg-gray-700 border-gray-500 text-gray-300"
+                            }`}>
+                                {feedback}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Painel Direito: Configuração */}
+                    <div className="w-full md:w-80 bg-gray-800 rounded-xl border border-gray-700 p-6 flex flex-col shadow-xl">
+                        <h2 className="text-xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2">Configuração de Hardware</h2>
+                        
+                        <div className="space-y-4 flex-1">
+                            {/* Toggle CPU */}
+                            <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+                                <div className="flex items-center gap-3">
+                                    <div className={parts.cpu ? "text-blue-400" : "text-gray-500"}><IconCpu /></div>
+                                    <div>
+                                        <div className="font-bold text-sm">Processador</div>
+                                        <div className="text-[10px] text-gray-400">Obrigatório (Cérebro)</div>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => togglePart('cpu')}
+                                    className={`w-12 h-6 rounded-full p-1 transition-colors ${parts.cpu ? 'bg-green-500' : 'bg-gray-500'}`}
+                                >
+                                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${parts.cpu ? 'translate-x-6' : ''}`}></div>
+                                </button>
+                            </div>
+
+                            {/* Toggle RAM */}
+                            <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+                                <div className="flex items-center gap-3">
+                                    <div className={parts.ram ? "text-green-400" : "text-gray-500"}><IconRam /></div>
+                                    <div>
+                                        <div className="font-bold text-sm">Memória RAM</div>
+                                        <div className="text-[10px] text-gray-400">Obrigatório p/ Vídeo</div>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => togglePart('ram')}
+                                    className={`w-12 h-6 rounded-full p-1 transition-colors ${parts.ram ? 'bg-green-500' : 'bg-gray-500'}`}
+                                >
+                                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${parts.ram ? 'translate-x-6' : ''}`}></div>
+                                </button>
+                            </div>
+
+                            {/* Toggle SSD */}
+                            <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+                                <div className="flex items-center gap-3">
+                                    <div className={parts.ssd ? "text-purple-400" : "text-gray-500"}><IconHdd /></div>
+                                    <div>
+                                        <div className="font-bold text-sm">SSD / HD</div>
+                                        <div className="text-[10px] text-gray-400">Opcional p/ BIOS</div>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => togglePart('ssd')}
+                                    className={`w-12 h-6 rounded-full p-1 transition-colors ${parts.ssd ? 'bg-green-500' : 'bg-gray-500'}`}
+                                >
+                                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${parts.ssd ? 'translate-x-6' : ''}`}></div>
+                                </button>
+                            </div>
+
+                            {/* Toggle Cabo Vídeo */}
+                            <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+                                <div className="flex items-center gap-3">
+                                    <div className={parts.video_cable ? "text-yellow-400" : "text-gray-500"}>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12h20M2 12l5-5M22 12l-5 5"/></svg>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-sm">Cabo HDMI</div>
+                                        <div className="text-[10px] text-gray-400">Conexão Monitor</div>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => togglePart('video_cable')}
+                                    className={`w-12 h-6 rounded-full p-1 transition-colors ${parts.video_cable ? 'bg-green-500' : 'bg-gray-500'}`}
+                                >
+                                    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${parts.video_cable ? 'translate-x-6' : ''}`}></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 bg-blue-900/30 p-4 rounded text-xs text-blue-200 border border-blue-800">
+                            <strong>Dica da SYSTA:</strong><br/>
+                            Tente ligar sem a Memória RAM e veja o que acontece. Depois, tente sem o SSD. Observe a diferença!
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DiagnosticSim />);
+    </script>
+</body>
+</html>
