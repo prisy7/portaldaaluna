@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório da Eva - O Coração da IA</title>
+    <!-- Importando Tailwind para o visual bonito -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="bg-slate-900 text-blue-50 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container Principal -->
+    <div id="app-container" class="max-w-2xl w-full bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border border-slate-700 relative min-h-[600px] flex flex-col">
+        
+        <!-- Header fixo -->
+        <div class="bg-slate-900/50 p-4 border-b border-slate-700 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <div class="text-xs font-mono text-slate-400">EVA_SYSTEM_V2.0</div>
+        </div>
+
+        <!-- Conteúdo Injetado via JavaScript -->
+        <div id="content" class="flex-1 flex flex-col p-6 sm:p-8 overflow-y-auto">
+            <!-- O conteúdo será renderizado aqui -->
+        </div>
+    
+    </div>
+
+    <script>
+        // --- DADOS DA ATIVIDADE ---
+        const questions = [
+            {
+                category: 'Conceito Fundamental',
+                question: "A IA não cria nada do zero. Segundo o nosso conceito de 'Biblioteca Infinita', qual é a melhor analogia para explicar de onde vem o conhecimento da IA?",
+                options: [
+                    "Ela possui uma consciência mágica que gera ideias espontâneas.",
+                    "Ela funciona como um espelho que reflete e reorganiza dados humanos pré-existentes.",
+                    "Ela baixa conhecimentos de uma rede intergaláctica via satélite.",
+                    "Ela lê apenas livros de ficção científica para aprender a criar."
+                ],
+                correctAnswer: 1,
+                explanation: "Exato! A IA é alimentada por dados humanos (livros, sites, códigos). Ela não 'pensa', ela processa e reflete o que nós já produzimos, reorganizando padrões."
+            },
+            {
+                category: 'Arquitetura',
+                question: "O que significa o 'M' na sigla LLM (Large Language Model), que costumamos chamar de 'cérebro estatístico' da IA?",
+                options: [
+                    "Memory (Memória Gigante)",
+                    "Magic (Mágica)",
+                    "Model (Modelo/Mapa Matemático)",
+                    "Machine (Máquina)"
+                ],
+                correctAnswer: 2,
+                explanation: "Perfeito! O Modelo é o 'mapa' matemático complexo que calcula a probabilidade da próxima palavra. Não é mágica, é pura matemática!"
+            },
+            {
+                category: 'Alucinação',
+                question: "Você perguntou sobre o 'smartphone a vapor de 1850' e a IA inventou uma história convincente cheia de detalhes. O que aconteceu?",
+                options: [
+                    "A IA acessou arquivos secretos da história perdida.",
+                    "A IA sofreu uma 'Alucinação'. Ela completou um padrão estatístico provável, não a verdade factual.",
+                    "Sir Reginald Steam realmente existiu e a IA descobriu isso.",
+                    "A IA estava brincando com você propositalmente para ser engraçada."
+                ],
+                correctAnswer: 1,
+                explanation: "Isso mesmo! A IA busca completar padrões de texto. Se você pede algo absurdo com confiança, ela tenta preencher a lacuna criando algo que *parece* real, mas não é."
+            },
+            {
+                category: 'Segurança de Dados',
+                question: "Você precisa resumir uma planilha com nomes, CPFs e salários reais da sua empresa. O que você NÃO deve fazer de jeito nenhum?",
+                options: [
+                    "Anonimizar os dados antes de usar a IA.",
+                    "Enviar a planilha completa para uma IA pública (como a versão gratuita do ChatGPT) analisar.",
+                    "Usar uma ferramenta interna e segura da empresa (Enterprise).",
+                    "Ler a planilha e fazer o resumo manualmente."
+                ],
+                correctAnswer: 1,
+                explanation: "Perigo detectado! Jamais envie dados sensíveis (PII) ou bancários para IAs públicas. Esses dados podem ser usados para treinar o modelo e vazar depois. Isso viola a LGPD."
+            },
+            {
+                category: 'Tipos de IA',
+                question: "Qual a diferença essencial entre a IA Preditiva (como recomendação da Netflix) e a IA Generativa (como o ChatGPT)?",
+                options: [
+                    "A Preditiva cria textos novos; a Generativa recomenda filmes.",
+                    "Não há diferença, ambas fazem a mesma coisa.",
+                    "A Preditiva escolhe opções existentes (classificação); a Generativa cria conteúdo novo.",
+                    "A Generativa é mais barata que a Preditiva."
+                ],
+                correctAnswer: 2,
+                explanation: "Correto! Preditiva prevê escolhas ou números (sim/não, A/B). Generativa cria algo novo (textos, imagens, códigos) que não existia antes."
+            },
+            // --- NOVAS PERGUNTAS ADICIONADAS ---
+            {
+                category: 'Aprendizado Profundo',
+                question: "Como a IA consegue identificar um gato numa foto? Pense em 'Redes Neurais'.",
+                options: [
+                    "Ela compara a foto pixel por pixel com uma foto guardada na memória.",
+                    "Ela usa 'camadas' de filtros: primeiro vê bordas, depois formas, depois bigodes, até concluir que é um gato.",
+                    "Ela envia a foto para um humano classificar rapidamente.",
+                    "Ela adivinha aleatoriamente."
+                ],
+                correctAnswer: 1,
+                explanation: "Isso! É o Deep Learning. A IA processa a imagem em camadas, do simples (traços) ao complexo (rosto do gato), imitando vagamente nossos neurônios."
+            },
+            {
+                category: 'Ética e Viés',
+                question: "Se treinarmos uma IA apenas com fotos de médicos homens, o que acontece quando pedimos para ela desenhar um 'médico'?",
+                options: [
+                    "Ela desenhará homens e mulheres igualmente, pois é inteligente.",
+                    "Ela desenhará apenas robôs.",
+                    "Ela tenderá a desenhar homens, reproduzindo o preconceito (viés) dos dados de treinamento.",
+                    "Ela se recusará a desenhar."
+                ],
+                correctAnswer: 2,
+                explanation: "Correto e importante! A IA aprende os vícios dos dados. Se os dados não têm diversidade, a IA replicará esse preconceito (Viés Algorítmico)."
+            },
+            {
+                category: 'Segurança / Deepfake',
+                question: "Você recebe um vídeo de uma celebridade pedindo dinheiro urgente. A voz e o rosto parecem perfeitos. Qual tecnologia de IA torna isso possível?",
+                options: [
+                    "Photoshop Básico.",
+                    "Deepfake (Troca profunda de rosto e voz via IA).",
+                    "Holograma 3D.",
+                    "Clonagem biológica."
+                ],
+                correctAnswer: 1,
+                explanation: "Cuidado! Deepfakes usam IA para trocar rostos e vozes em vídeos com realismo assustador. Sempre verifique a fonte antes de acreditar."
+            },
+            {
+                category: 'Como usar',
+                question: "Para a IA dar uma resposta excelente, você precisa dar um comando claro e detalhado. Qual o nome dessa habilidade?",
+                options: [
+                    "Programação Avançada.",
+                    "Engenharia de Prompt.",
+                    "Telepatia Digital.",
+                    "Formatação de Texto."
+                ],
+                correctAnswer: 1,
+                explanation: "Exato! O 'Prompt' é o pedido que você faz. Quanto melhor e mais rico for o seu Prompt (contexto, persona, detalhes), melhor a resposta da IA."
+            },
+            {
+                category: 'Limitações',
+                question: "A versão base de uma IA (sem acesso à internet em tempo real) sabe o que aconteceu no noticiário há 5 minutos?",
+                options: [
+                    "Sim, ela é onisciente e sabe tudo instantaneamente.",
+                    "Não, ela tem uma 'data de corte' de conhecimento (só sabe o que aprendeu durante o treinamento).",
+                    "Sim, ela lê as mentes dos jornalistas.",
+                    "Talvez, se você pedir com educação."
+                ],
+                correctAnswer: 1,
+                explanation: "Perfeito. O modelo base é como uma enciclopédia impressa: o conhecimento vai até a data em que foi 'impresso' (treinado). Para notícias recentes, ela precisa de ferramentas extras de busca."
+            }
+        ];
+
+        // --- ESTADO DO APP ---
+        let currentStep = 'intro';
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let isAnswered = false; // Para travar a resposta após o clique
+
+        // --- ÍCONES SVG ---
+        const icons = {
+            brain: `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400 mx-auto mb-4"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 12.578c.07-1.225.244-2.518.552-3.722"/><path d="M20.523 12.578c-.07-1.225-.244-2.518-.552-3.722"/></svg>`,
+            check: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><path d="M20 6 9 17l-5-5"/></svg>`,
+            x: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`,
+            trophy: `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400 mx-auto mb-4"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`
+        };
+
+        // --- FUNÇÕES DE RENDERIZAÇÃO ---
+
+        function renderIntro() {
+            return `
+                <div class="text-center fade-in my-auto">
+                    ${icons.brain}
+                    <h1 class="text-3xl font-bold text-white mb-2">Bem-vindo ao Lab da Eva</h1>
+                    <p class="text-blue-200 mb-8 max-w-md mx-auto">Vamos desmistificar a Inteligência Artificial? Teste seus conhecimentos sobre como as máquinas "pensam", ética e segurança.</p>
+                    
+                    <button onclick="startQuiz()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg border border-blue-400">
+                        Iniciar Experiência
+                    </button>
+                    <p class="mt-6 text-slate-500 text-sm">São 10 Perguntas Rápidas</p>
+                </div>
+            `;
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+
+            let optionsHtml = '';
+            q.options.forEach((opt, idx) => {
+                optionsHtml += `
+                    <button id="btn-${idx}" onclick="handleAnswer(${idx})" 
+                        class="w-full text-left p-4 rounded-xl border border-slate-600 bg-slate-700 hover:bg-slate-600 transition-all mb-3 flex items-center justify-between group focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <span class="text-slate-200 group-hover:text-white">${opt}</span>
+                        <span id="icon-${idx}" class="opacity-0 transition-opacity"></span>
+                    </button>
+                `;
+            });
+
+            return `
+                <div class="w-full fade-in flex flex-col h-full">
+                    <!-- Barra de Progresso -->
+                    <div class="w-full bg-slate-700 h-2 rounded-full mb-6">
+                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+                    </div>
+
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-blue-900 text-blue-300 text-xs font-bold rounded uppercase tracking-wider">${q.category}</span>
+                        <span class="text-slate-400 text-xs">Questão ${currentQuestionIndex + 1}/${questions.length}</span>
+                    </div>
+
+                    <h2 class="text-xl md:text-2xl font-semibold text-white mb-6 leading-relaxed">${q.question}</h2>
+
+                    <div class="flex-1">
+                        ${optionsHtml}
+                    </div>
+
+                    <div id="feedback-area" class="hidden mt-4 p-4 bg-slate-700/50 border border-slate-600 rounded-lg">
+                        <p id="feedback-text" class="text-sm text-slate-300"></p>
+                    </div>
+
+                    <button id="next-btn" onclick="nextStep()" class="hidden mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg w-full transition-all">
+                        ${currentQuestionIndex === questions.length - 1 ? 'Ver Resultado' : 'Próxima Questão'}
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderResult() {
+            let message = "";
+            let subMessage = "";
+            
+            const percentage = (score / questions.length) * 100;
+
+            if (percentage === 100) {
+                message = "Excelente! Mestre da IA!";
+                subMessage = "Você dominou os conceitos, a ética e a segurança. Está pronto para o futuro!";
+            } else if (percentage >= 70) {
+                message = "Muito bom!";
+                subMessage = "Você tem uma base sólida! Alguns detalhes de segurança ou funcionamento podem ser refinados.";
+            } else {
+                message = "Bom começo de jornada!";
+                subMessage = "A IA é complexa. Vale a pena revisar sobre Deepfakes e Alucinação para se proteger.";
+            }
+
+            return `
+                <div class="text-center fade-in my-auto">
+                    ${icons.trophy}
+                    <h2 class="text-3xl font-bold text-white mb-2">${message}</h2>
+                    <p class="text-4xl font-mono text-blue-400 font-bold mb-4">${score} / ${questions.length}</p>
+                    <p class="text-slate-300 mb-8 max-w-md mx-auto">${subMessage}</p>
+                    
+                    <button onclick="restartQuiz()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-8 rounded-full border border-slate-500 transition-all">
+                        Tentar Novamente
+                    </button>
+                </div>
+            `;
+        }
+
+        // --- LÓGICA DE CONTROLE ---
+
+        function render() {
+            const container = document.getElementById('content');
+            container.innerHTML = ''; // Limpa tela
+
+            if (currentStep === 'intro') {
+                container.innerHTML = renderIntro();
+            } else if (currentStep === 'quiz') {
+                container.innerHTML = renderQuestion();
+            } else if (currentStep === 'result') {
+                container.innerHTML = renderResult();
+            }
+        }
+
+        function startQuiz() {
+            currentStep = 'quiz';
+            render();
+        }
+
+        function handleAnswer(selectedIndex) {
+            if (isAnswered) return; // Evita múltiplos cliques
+            isAnswered = true;
+
+            const q = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === q.correctAnswer;
+            
+            // Atualiza visual dos botões
+            const selectedBtn = document.getElementById(`btn-${selectedIndex}`);
+            const correctBtn = document.getElementById(`btn-${q.correctAnswer}`);
+            const iconContainer = document.getElementById(`icon-${selectedIndex}`);
+
+            if (isCorrect) {
+                score++;
+                selectedBtn.classList.remove('bg-slate-700', 'border-slate-600');
+                selectedBtn.classList.add('bg-green-900/50', 'border-green-500');
+                iconContainer.innerHTML = icons.check;
+            } else {
+                selectedBtn.classList.remove('bg-slate-700', 'border-slate-600');
+                selectedBtn.classList.add('bg-red-900/50', 'border-red-500');
+                iconContainer.innerHTML = icons.x;
+                
+                // Mostra qual era a correta para aprender
+                correctBtn.classList.add('ring-2', 'ring-green-500/50');
+            }
+            
+            iconContainer.classList.remove('opacity-0');
+
+            // Feedback Texto
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackText = document.getElementById('feedback-text');
+            
+            feedbackArea.classList.remove('hidden', 'fade-in'); // Reset animação simples
+            void feedbackArea.offsetWidth; // Trigger reflow
+            feedbackArea.classList.add('fade-in');
+            
+            feedbackText.innerHTML = `<strong class="${isCorrect ? 'text-green-400' : 'text-red-400'}">${isCorrect ? 'Correto!' : 'Ops!'}</strong> ${q.explanation}`;
+
+            // Botão Próximo
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextStep() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                isAnswered = false;
+                render();
+            } else {
+                currentStep = 'result';
+                render();
+            }
+        }
+
+        function restartQuiz() {
+            currentStep = 'intro';
+            currentQuestionIndex = 0;
+            score = 0;
+            isAnswered = false;
+            render();
+        }
+
+        // Inicializa
+        render();
+
+    </script>
+</body>
+</html>
