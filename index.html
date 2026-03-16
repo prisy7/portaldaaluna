@@ -72,7 +72,7 @@
         };
 
         const App = () => {
-            const [selectedAulaId, setSelectedAulaId] = useState('AULA-11');
+            const [selectedAulaId, setSelectedAulaId] = useState('AULA-12');
             const [sidebarOpen, setSidebarOpen] = useState(false);
             const [activeTab, setActiveTab] = useState('aulas');
 
@@ -219,6 +219,17 @@
                         { nome: 'Gravação da Aula', link: 'https://drive.google.com/file/d/1ZmI6WEatLoZspGuGVu10k028vPoGBJEb/view', icon: 'video' },
                         { nome: 'Transcrição da Aula', link: 'https://docs.google.com/document/d/1FrafuTgfA0bvu-Ijz5SuU_nEWgdZb8OtlgtMKFocNAw/edit?tab=t.bha8ic27zwfo', icon: 'file-text' }
                     ]
+                },
+                {
+                    id: 'AULA-12',
+                    titulo: 'AULA 12 - ONLINE - Nuvem',
+                    data: '16/03/2026',
+                    status: 'Não iniciada',
+                    descricao: 'Aula teórica com a Natasha abordando os principais conceitos de Computação em Nuvem e armazenamento de dados.',
+                    materiais: [
+                        { nome: 'Link da Aula (Meet)', link: 'https://meet.google.com/qzp-uxac-kjz', icon: 'video' },
+                        { nome: 'Apresentação: Nuvem', link: 'https://docs.google.com/presentation/d/1Szs_VjIPNCFIjwjPdsogb77e1BlzkhymJuKEXu_WyuE/edit?usp=sharing', icon: 'monitor' }
+                    ]
                 }
             ];
 
@@ -317,7 +328,7 @@
                                                     {currentAula.status}
                                                 </span>
                                                 <span className="text-slate-400 text-xs font-mono font-bold tracking-widest bg-white px-3 py-1 rounded-lg border border-slate-100 shadow-sm">
-                                                    {currentAula.data} {currentAula.id === 'AULA-11' ? '• 16:30h - 17:30h' : ''}
+                                                    {currentAula.data} {currentAula.id === 'AULA-12' ? '• 16:30h - 18:00h' : ''}
                                                 </span>
                                             </div>
                                             <h1 className="text-2xl md:text-4xl font-semibold text-slate-900 leading-tight mb-6 tracking-tight">
@@ -347,7 +358,7 @@
                                                                 {mat.nome}
                                                             </h3>
                                                             <div className="flex items-center gap-1.5 mt-1 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                                                                <span>Abrir Recurso</span>
+                                                                <span>{mat.nome.includes('Meet') ? 'Entrar na Aula' : 'Abrir Recurso'}</span>
                                                                 <Icon name="external-link" className="w-3 h-3" />
                                                             </div>
                                                         </div>
