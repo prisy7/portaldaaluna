@@ -239,8 +239,11 @@
                     status: 'Concluída',
                     descricao: 'Aula teórica com a Natasha sobre processos, ferramentas e cuidados na realização de upgrades em notebooks.',
                     materiais: [
+                        { nome: 'Gravação da Aula', link: 'https://drive.google.com/file/d/1WCU5kpom8PTwcaJGTPgXrmoHtWLx83ne/view?usp=sharing', icon: 'video' },
+                        { nome: 'Transcrição da Aula', link: 'https://docs.google.com/document/d/1HD3tJXknD6zYOlaZgUEiKLRjqwM65UeQ6l-z0BzH_KY/edit?usp=sharing', icon: 'file-text' },
                         { nome: 'Apresentação: Upgrade', link: 'https://docs.google.com/presentation/d/1fCcb_KlPbd5NPEOPKDboRgXO_B-nHDRGW_AsDb-IiD8/edit?usp=sharing', icon: 'monitor' },
-                        { nome: 'Fazer upgrade de 2 notebooks', link: 'https://docs.google.com/spreadsheets/d/1ufYSGu07T6NPJK_Pp_BDq3BSyFnrrq57GK-MRQWnWaU/edit?gid=1441172367#gid=1441172367', icon: 'wrench' }
+                        { nome: 'Fazer upgrade de 2 notebooks', link: 'https://docs.google.com/spreadsheets/d/1ufYSGu07T6NPJK_Pp_BDq3BSyFnrrq57GK-MRQWnWaU/edit?gid=1441172367#gid=1441172367', icon: 'wrench' },
+                        { nome: 'Quiz: Upgrade', link: 'quiz_upgrade.html', icon: 'help-circle' }
                     ]
                 }
             ];
@@ -340,7 +343,7 @@
                                                     {currentAula.status}
                                                 </span>
                                                 <span className="text-slate-400 text-xs font-mono font-bold tracking-widest bg-white px-3 py-1 rounded-lg border border-slate-100 shadow-sm">
-                                                    {currentAula.data} {currentAula.id === 'AULA-12' ? '• 16:30h - 18:00h' : currentAula.id === 'AULA-13' ? '• 09:00h - 10:00h' : ''}
+                                                    {currentAula.data} {currentAula.id === 'AULA-13' ? '• 09:00h - 10:00h' : ''}
                                                 </span>
                                             </div>
                                             <h1 className="text-2xl md:text-4xl font-semibold text-slate-900 leading-tight mb-6 tracking-tight">
